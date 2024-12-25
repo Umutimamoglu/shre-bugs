@@ -93,4 +93,14 @@ interface Message {
     message: string;
     createdAt: string;
 }
-
+export type RegisterUserTypes = {
+    email: string;
+    name: string;
+    password: string;
+    image: string | null; // Null değerini de destekle
+    positionTitle: string;
+};
+type LoginUserTypes = {
+    email: string;
+    password: string;
+};
