@@ -1,42 +1,74 @@
 import styled from "styled-components/native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, SafeAreaViewProps } from "react-native-safe-area-context";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import {
-    Ionicons,
-    MaterialCommunityIcons,
-    MaterialIcons,
-    FontAwesome,
-    FontAwesome5,
-    Entypo,
-    AntDesign,
-    SimpleLineIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+  FontAwesome,
 } from "@expo/vector-icons";
 
-import { Keyboard } from "react-native";
 
-export const SafeArea = styled(SafeAreaView).attrs((props) => ({
-    edges: props && props.edges ? props.edges : ["right", "top", "left"],
+
+
+interface SafeAreaProps extends SafeAreaViewProps {
+  color?: string;
+}
+
+export const KeyboardCloserView = styled.View`
+  flex: 1;
+`;
+
+
+
+
+
+export const SafeArea = styled(SafeAreaView).attrs<SafeAreaProps>((props) => ({
+  edges: props.edges || ["right", "top", "left"],
 }))`
   flex: 1;
-  background-color: ${(props) =>
-        props.color || props.theme.colors.bg.secondary || "#f2f2f2"};
+
+  background-color: ${(props) => props.color || props.theme.colors.bg.secondary || "#f2f2f2"};
 `;
 
-export const MainContainer = styled.View`
+interface CenteredContainerProps {
+  absolute?: boolean;
+}
+
+interface RowContainerProps {
+  justifyContent?: string;
+  alignItems?: string;
+  padding?: string;
+  margin?: string;
+}
+
+interface MainContainerProps {
+  color?: string;
+  padding?: string;
+}
+
+export const MainContainer = styled.View<MainContainerProps>`
   flex: 1;
-  padding: 0px 10px;
+  padding: ${(props) => props.padding || "0px 0px"};
   background-color: ${(props) =>
-        props.color || props.theme.colors.bg.primary || "transparent"};
+    props.color || props.theme.colors.bg.primary || "transparent"};
 `;
 
-export const CenteredContainer = styled.View`
+export const RowContainer = styled.View<RowContainerProps>`
+  flex-direction: row;
+  justify-content: ${(props) => props.justifyContent || "space-between"};
+  align-items: ${(props) => props.alignItems || "center"};
+  padding: ${(props) => props.padding || "0px"};
+  margin: ${(props) => props.margin || "0px"};
+`;
+
+export const CenteredContainer = styled.View<CenteredContainerProps>`
   flex: 1;
   justify-content: center;
   align-items: center;
   position: ${({ absolute }) => (absolute ? "absolute" : "relative")};
   ${({ absolute }) =>
-        absolute &&
-        `
+    absolute &&
+    `
     top: 0;
     left: 0;
     right: 0;
@@ -44,77 +76,12 @@ export const CenteredContainer = styled.View`
   `}
 `;
 
-export const RowContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: ${({ align }) => align || "center"};
-`;
+interface CustomIconProps {
+  iconName: string;
+  iconLbr: string;
+  size?: number;
+  color?: string;
+  focused?: boolean;
+}
 
-export const Loading = styled.ActivityIndicator.attrs((props) => ({
-    size: props.size || "large",
-    color: props.color || props.theme.colors.bg.secondary,
-}))``;
 
-export const CustomIcon = styled(
-    ({ iconName, iconLbr, size, color, focused }) => {
-        const defColor = "#000000";
-        return iconLbr == "Ionicons" ? (
-            <Ionicons
-        name= { iconName }
-        size = { size? size: focused ? 20 : 16 }
-        color = { color || defColor
-    }
-      />
-) : iconLbr == "MaterialCommunityIcons" ? (
-    <MaterialCommunityIcons
-        name= { iconName }
-        size = { size? size: focused ? 22 : 18 }
-color = { color || defColor}
-      />
-    ) : iconLbr == "MaterialIcons" ? (
-    <MaterialIcons
-        name= { iconName }
-        size = { size? size: ocused ? 22 : 18 }
-color = { color || defColor}
-      />
-    ) : iconLbr == "FontAwesome" ? (
-    <FontAwesome
-        name= { iconName }
-        size = { size? size: focused ? 20 : 16 }
-color = { color || defColor}
-      />
-    ) : iconLbr == "Entypo" ? (
-    <Entypo
-        name= { iconName }
-        size = { size? size: focused ? 20 : 16 }
-color = { color || defColor}
-      />
-    ) : iconLbr == "AntDesign" ? (
-    <AntDesign
-        name= { iconName }
-        size = { size? size: focused ? 20 : 16 }
-color = { color || defColor}
-      />
-    ) : iconLbr == "SimpleLineIcons" ? (
-    <SimpleLineIcons
-        name= { iconName }
-        size = { size? size: focused ? 20 : 16 }
-color = { color || defColor}
-      />
-    ) : (
-    <FontAwesome5
-        name= { iconName }
-size = { size? size: focused ? 20 : 16 }
-color = { color || defColor}
-      />
-    );
-  }
-)`
-  z-index: 9;
-`;
-
-export const KeyboardCloserView = styled.TouchableWithoutFeedback.attrs({
-    onPress: Keyboard.dismiss,
-})`
-  flex: 1;
-`;

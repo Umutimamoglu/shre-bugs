@@ -1,52 +1,32 @@
-
 import { ThemeProvider } from "styled-components/native";
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme } from "./src/theme";
-
-import { AccountProvider, AccountContext } from "../share-bugs/src/services/account/account.context";
-import React from 'react';
-import Navigation from './src/infrastracture/navigation/index';
-
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { theme } from "./src/theme/index";
+import React from "react";
+import Navigation from "./src/infrastracture/navigation/index";
 
 import {
-  Poppins_100Thin,
-  Poppins_200ExtraLight,
-  Poppins_300Light,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
   useFonts,
+  Poppins_400Regular,
 } from "@expo-google-fonts/poppins";
 
-import { Quicksand_400Regular } from "@expo-google-fonts/quicksand";
-
-let customFonts = {
-  PP_Thin: Poppins_100Thin,
-  PP_ExtraLight: Poppins_200ExtraLight,
-  PP_Light: Poppins_300Light,
+const customFonts = {
   PP_Regular: Poppins_400Regular,
-  PP_Medium: Poppins_500Medium,
-  PP_SemiBold: Poppins_600SemiBold,
-  PP_Bold: Poppins_700Bold,
-  QS_Regular: Quicksand_400Regular,
 };
 
-
 export default function App() {
+  const [fontsLoaded] = useFonts(customFonts);
 
-  let [fontsLoaded] = useFonts(customFonts);
+  if (!fontsLoaded) {
+    return null; // Fontlar yüklenmeden uygulama yüklenmez.
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaProvider>
-        <AccountProvider>
-          <Navigation />
-        </AccountProvider>
+        <Navigation />
         <StatusBar translucent />
       </SafeAreaProvider>
     </ThemeProvider>
   );
-
 }
-
