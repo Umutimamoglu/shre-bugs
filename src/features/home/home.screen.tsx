@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
 
-        backgroundColor: '#f3d8f8',
+        backgroundColor: '#f8f8f8',
     },
     card: {
         gap: 9,
