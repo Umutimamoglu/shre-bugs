@@ -83,7 +83,7 @@ const SignUpScreen = () => {
     }, []);
 
     return (
-        <SafeArea edges={["top"]} color={theme.colors.white}>
+        <SafeArea edges={["top"]} color={theme.colors.brand.primary}>
             <MainContainer color={"#D8D0D0"}>
                 <KeyboardCloser isEnabled>
                     <TopContainer>

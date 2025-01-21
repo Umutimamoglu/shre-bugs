@@ -3,6 +3,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RegisterUserTypes } from "types";
 import { registerUser, loginUser } from "./account.service";
 
+
+
 // Context Tipi
 interface AccountContextType {
     isLoading: boolean;
@@ -53,13 +55,17 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Login Function
     const login = async (email: string, password: string) => {
         setIsLoading(true);
         setError(null);
 
         try {
             const loggedInUser = await loginUser({ email, password });
+
+            // Kullanıcı bilgisini AsyncStorage'da sakla
+            await AsyncStorage.setItem("@user", JSON.stringify(loggedInUser));
+
+            // Kullanıcı bilgisini AccountContext'e set et
             setUser(loggedInUser);
             console.log("User logged in and set:", loggedInUser);
         } catch (err) {
@@ -71,6 +77,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(false);
         }
     };
+
 
     // Logout Function
     const logout = async () => {

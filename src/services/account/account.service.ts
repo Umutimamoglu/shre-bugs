@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import * as SecureStore from "expo-secure-store";
 import { BASE_URL } from "../connections";
-const TIME_OUT = 200000;
+const TIME_OUT = 100000;
 import { LoginUserTypes, RegisterUserTypes } from "../../../types";
 
 export const axiosInstance = axios.create({
