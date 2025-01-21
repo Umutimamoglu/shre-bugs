@@ -4,13 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import { KeyboardCloser } from "@src/components/keyboard-closer.component";
 import { AuthScreenNavigationType } from '@src/infrastracture/navigation/types';
 import { AccountContext } from '@src/services/account/account.context';
-import { BottomContainer, ButtonText, CustomButton, TopContainer } from '../components/acoount.styled';
+import { BottomContainer, ButtonText, CustomButton, InputsContainer, TopContainer } from '../components/acoount.styled';
 import { MainContainer, SafeArea } from '@src/components/main.style';
 import { theme } from '@src/theme';
 import { Title } from '../components/title.component';
+import { Header } from '../components/header.component';
 
-
-const SingUpScreen = () => {
+const SignUpScreen = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [name, setName] = useState<string>("");
@@ -27,6 +27,17 @@ const SingUpScreen = () => {
     };
 
     const handleRegister = () => {
+        if (!email || !password || !name || !positionTitle || !confirmPassword) {
+            console.log("Eksik alanlar:", {
+                email: email || "Boş",
+                password: password || "Boş",
+                name: name || "Boş",
+                positionTitle: positionTitle || "Boş",
+                confirmPassword: confirmPassword || "Boş",
+            });
+            Alert.alert("Uyarı", "Tüm alanları doldurmanız gerekiyor.", [{ text: "Tamam" }]);
+            return;
+        }
         if (
             email.length < 6 ||
             email.indexOf("@") === -1 ||
@@ -45,7 +56,14 @@ const SingUpScreen = () => {
             ]);
             return;
         }
-        register(email, password, name, image, positionTitle);
+
+        try {
+            register(email, password, name, image, positionTitle);
+            console.log("Kullanıcı başarıyla kaydedildi.");
+        } catch (err) {
+            console.error("Kullanıcı kaydedilemedi:", err);
+            Alert.alert("Hata", "Kullanıcı kayıt işlemi sırasında bir hata oluştu.");
+        }
     };
 
     useEffect(() => {
@@ -70,47 +88,103 @@ const SingUpScreen = () => {
                 <KeyboardCloser isEnabled>
                     <TopContainer>
                         {!keyboardActive && <Title />}
-                        <View style={{ flexDirection: "row" }}>
-                            <View style={{ marginLeft: 52, justifyContent: "center" }}>
-                                <Text style={{ fontSize: 17, fontWeight: 500 }}>
-                                    Set Up your account
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={{ marginBottom: 24 }} />
-                        <TextInput
-                            style={{ width: 200, height: 40, backgroundColor: "#f3f3f3" }}
-                            onChangeText={setName}
-                            value={name}
-                            placeholder="name"
-                            keyboardType="numeric"
-                        />
-                        <View style={{ marginBottom: 24 }} />
-                        <TextInput
-                            style={{ width: 200, height: 40, backgroundColor: "#f3f3f3" }}
-                            onChangeText={setEmail}
-                            value={email}
-                            placeholder="useless placeholder"
-                            keyboardType="numeric"
-                        />
-                        <View style={{ marginBottom: 24 }} />
-                        <TextInput
-                            style={{ width: 200, height: 40, backgroundColor: "#f3f3f3" }}
-                            onChangeText={setPassword}
-                            value={password}
-                            placeholder="useless placeholder"
-                            keyboardType="numeric"
-                        />
+
+                        <Header title="Kayıt Ol" subtitle="Hatalarını kolayca çöz" />
+
+                        <InputsContainer>
+                            <TextInput
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                    backgroundColor: "#f3f3f3",
+                                    borderRadius: 10,
+                                    marginTop: 5,
+                                    marginBottom: 5,
+                                    paddingHorizontal: 10,
+                                }}
+                                onChangeText={setName}
+                                value={name}
+                                placeholder="Enter your username"
+                                keyboardType="default"
+                            />
+                            <TextInput
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                    backgroundColor: "#f3f3f3",
+                                    borderRadius: 10,
+                                    marginTop: 5,
+                                    marginBottom: 5,
+                                    paddingHorizontal: 10,
+                                }}
+                                onChangeText={setPositionTitle}
+                                value={positionTitle}
+                                placeholder="Position title"
+                                keyboardType="default"
+                                secureTextEntry={false}
+                            />
+                            <TextInput
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                    backgroundColor: "#f3f3f3",
+                                    borderRadius: 10,
+                                    marginTop: 5,
+                                    marginBottom: 5,
+                                    paddingHorizontal: 10,
+                                }}
+                                onChangeText={setEmail}
+                                value={email}
+                                placeholder="Enter your email"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                            />
+                            <TextInput
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                    backgroundColor: "#f3f3f3",
+                                    borderRadius: 10,
+                                    marginTop: 5,
+                                    marginBottom: 5,
+                                    paddingHorizontal: 10,
+                                }}
+                                onChangeText={setPassword}
+                                value={password}
+                                placeholder="Enter your password"
+                                keyboardType="default"
+                                secureTextEntry={true}
+                            />
+                            <TextInput
+                                style={{
+                                    width: 200,
+                                    height: 40,
+                                    backgroundColor: "#f3f3f3",
+                                    borderRadius: 10,
+                                    marginTop: 5,
+                                    marginBottom: 5,
+                                    paddingHorizontal: 10,
+                                }}
+                                onChangeText={setConfirmPassword}
+                                value={confirmPassword}
+                                placeholder="Confirm your password"
+                                keyboardType="default"
+                                secureTextEntry={true}
+                            />
+                        </InputsContainer>
                     </TopContainer>
                     <BottomContainer>
                         <Pressable onPress={navigateToSignInScreen}>
-                            <Text style={{ textAlign: 'center', color: "#ef4444" }}>
+                            <Text style={{ textAlign: "center", color: "#ef4444" }}>
                                 Zaten bir hesabınız var mı?
                             </Text>
                         </Pressable>
                         <CustomButton
                             onPress={handleRegister}
-                            style={{ backgroundColor: '#ef4444', marginTop: 15 }}
+                            style={{
+                                backgroundColor: "#ef4444",
+                                marginTop: 15,
+                            }}
                         >
                             <ButtonText>Kayıt Ol</ButtonText>
                         </CustomButton>
@@ -121,4 +195,4 @@ const SingUpScreen = () => {
     );
 };
 
-export default SingUpScreen;
+export default SignUpScreen;

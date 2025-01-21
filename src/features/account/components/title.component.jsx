@@ -1,42 +1,26 @@
 import { View, Text } from "react-native";
 import { RowContainer } from "@src/components/main.style";
-
+import { FontAwesome6 } from '@expo/vector-icons';
+import { Line } from "react-native-svg";
+import { border, color } from "@shopify/restyle";
 
 export const Title = () => {
   return (
     <View>
-      <RowContainer justifyContent="center" alignItems="center">
-        <Text
-          variant="title"
-          color="gray"
+      <View style={{ flex: 0.4, justifyContent: 'center', alignItems: 'center' }}>
+        <FontAwesome6 name="bug-slash" size={50} color="black" style={{ marginBottom: 20 }} />
+        <View
           style={{
-            fontSize: 26,
+            marginTop: 140,
+            height: 4,
+            backgroundColor: 'red',
+            width: '100%',
+            paddingLeft: 0,
+            marginBottom: 1, // Altına boşluk ekler
           }}
-        >
-          Sahare
-        </Text>
-        <Text
-          variant="title"
-          color="#00d1d1"
-          style={{
-            marginLeft: 10,
-            fontSize: 26,
-          }}
-        >
-          & Fix Bug
-        </Text>
-      </RowContainer>
-      <Text
-        variant="subheader"
-        color="gray"
-        style={{
-          fontSize: 13,
-          fontFamily: "PP_ExtraLight",
-          marginTop: -10,
-        }}
-      >
-        Bug Tracker & Collaboration
-      </Text>
+        />
+
+      </View>
     </View>
   );
 };

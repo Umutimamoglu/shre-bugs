@@ -13,9 +13,9 @@ export const KeyboardCloser = ({ children, isEnabled = false }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === "ios" ? "padding" : undefined} // iOS için padding
           style={{ flex: 1 }}
-          enabled={isEnabled}
+          enabled={isEnabled} // enabled ayarını doğru verdiğinizden emin olun
         >
           {children}
         </KeyboardAvoidingView>

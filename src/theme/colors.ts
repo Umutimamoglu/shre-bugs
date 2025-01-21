@@ -1,3 +1,6 @@
+
+
+
 export const palette = {
     white: "#ffffff",
     primary: "#007AFF",
@@ -198,6 +201,7 @@ export const palette = {
 }
 
 export const colors = {
+    bg: palette.zinc400,
     white: palette.white,
     lightGray: palette.lightGray,
     gray550: palette.gray550,

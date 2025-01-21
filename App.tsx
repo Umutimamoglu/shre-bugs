@@ -9,6 +9,7 @@ import {
   useFonts,
   Poppins_400Regular,
 } from "@expo-google-fonts/poppins";
+import { AccountProvider } from "./src/services/account/account.context";
 
 const customFonts = {
   PP_Regular: Poppins_400Regular,
@@ -24,8 +25,12 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaProvider>
-        <Navigation />
-        <StatusBar translucent />
+        <AccountProvider>
+
+          <Navigation />
+          <StatusBar translucent />
+
+        </AccountProvider>
       </SafeAreaProvider>
     </ThemeProvider>
   );
