@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Pressable, Text, TextInput } from 'react-native';
-import useSWRMutation from 'swr/mutation';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, { useEffect, useState } from "react";
+import { Pressable, Text } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { BASE_URL } from "@src/services/connections";
-
-import { CreateError, IColor } from "types";
-import { launchImageLibrary, ImageLibraryOptions } from 'react-native-image-picker';
-import DropDownPicker from "react-native-dropdown-picker";
-import { useSWRConfig } from 'swr';
+import { CreateBugPayload, IColor } from "types";
+import { launchImageLibrary, ImageLibraryOptions } from "react-native-image-picker";
 import { getColors } from "src/heplers";
-
-import { ERROR_TYPES, PROGRAMMING_LANGUAGES } from "src/constants/data";
-import { axiosInstance } from '@src/services/account/account.service';
-import { SafeArea } from '@src/components/main.style';
+import * as ImagePicker from "expo-image-picker";
+import { PROGRAMMING_LANGUAGES, BUG_TYPES } from "src/constants/data";
+import { SafeArea } from "@src/components/main.style";
 import {
     ButtonText,
     CardContainer,
@@ -29,109 +24,98 @@ import {
     StyledPressableButton,
     TextInputStyled,
     TitleText,
-} from '../components/home.styled';
-import { CustomButton, InputsContainer } from '@src/features/account/components/acoount.styled';
-import { theme } from '@src/theme';
+} from "../components/home.styled";
+import { theme } from "@src/theme";
+import { useBug } from "@src/services/bugs/bugs.context";
 
 const COLORS = getColors();
 
-const CreateErrorRequest = async (url: string, { arg }: { arg: FormData }) => {
-    try {
-        await axiosInstance.post(url, arg, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-};
-
 function HomeScreen() {
+    const { createBug } = useBug(); // Bug context kullanımı
+
     const [languageOpen, setLanguageOpen] = useState(false);
     const [languageValue, setLanguageValue] = useState<string | null>(null);
     const [languageItems, setLanguageItems] = useState(
         PROGRAMMING_LANGUAGES.map((lang) => ({ label: lang.name, value: lang.name }))
     );
 
-    const [errorTypeOpen, setErrorTypeOpen] = useState(false);
-    const [errorTypeValue, setErrorTypeValue] = useState<string | null>(null);
-    const [errorTypeItems, setErrorTypeItems] = useState(
-        ERROR_TYPES.map((error) => ({ label: error.name, value: error.name }))
+    const [bugTypeOpen, setBugTypeOpen] = useState(false);
+    const [bugTypeValue, setBugTypeValue] = useState<string | null>(null);
+    const [bugTypeItems, setBugTypeItems] = useState(
+        BUG_TYPES.map((bug) => ({ label: bug.name, value: bug.name }))
     );
 
     const [selectedColor, setSelectedColor] = useState<IColor>(COLORS[0]);
-    const [image, setImage] = useState<string>('');
-    const { trigger } = useSWRMutation('api/errors/create', CreateErrorRequest);
-    const { mutate } = useSWRConfig();
-    const [newError, setNewError] = useState<CreateError>({
-        name: '',
+    const [image, setImage] = useState<string>("");
+
+    const [newBug, setNewBug] = useState<CreateBugPayload>({
+        name: "",
         color: COLORS[0],
-        language: '',
+        language: "",
         isFixed: false,
         image: undefined,
-        type: '',
-        howDidIFix: '',
+        type: "",
+        howDidIFix: "",
     });
-    const [errorName, seterrorName] = useState<string>("")
 
-
-    const createNewError = async () => {
+    const createNewBug = async () => {
         try {
-            const formData = new FormData();
-            formData.append('name', newError.name);
-            formData.append('color[id]', selectedColor.id);
-            formData.append('color[name]', selectedColor.name);
-            formData.append('color[code]', selectedColor.code);
-            formData.append('isFixed', newError.isFixed.toString());
-            formData.append('language', newError.language);
-            formData.append('type', newError.type);
-            formData.append('howDidIFix', newError.howDidIFix || 'Not specified');
-            if (image) {
-                formData.append('image', {
-                    uri: image,
-                    name: 'photo.jpg',
-                    type: 'image/jpeg',
-                } as any);
-            }
-
-            console.log('Form Data Gönderiliyor:', formData);
-
-            await trigger(formData);
-            await mutate(BASE_URL + 'api/errors/create');
+            await createBug({
+                ...newBug,
+                color: selectedColor,
+                image: image
+                    ? {
+                        uri: image,
+                        name: "photo.jpg",
+                        type: "image/jpeg",
+                    }
+                    : undefined,
+            });
+            console.log("Bug successfully created");
         } catch (error) {
-            console.error('Error creating new error:', error);
+            console.error("Error creating bug:", error);
         }
     };
 
+
     const selectImageFromLibrary = async () => {
-        const options: ImageLibraryOptions = { mediaType: 'photo', quality: 1 };
-        launchImageLibrary(options, (response) => {
-            if (response.assets) {
-                const source = response.assets[0]?.uri || '';
-                setImage(source);
-            }
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== "granted") {
+            alert("Media library permissions are required!");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
         });
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+            console.log("Selected Image URI:", result.assets[0].uri);
+        }
     };
+
 
     useEffect(() => {
         if (languageValue) {
-            setNewError((prev) => ({ ...prev, language: languageValue }));
+            setNewBug((prev) => ({ ...prev, language: languageValue }));
         }
     }, [languageValue]);
 
     useEffect(() => {
-        if (errorTypeValue) {
-            setNewError((prev) => ({ ...prev, type: errorTypeValue }));
+        if (bugTypeValue) {
+            setNewBug((prev) => ({ ...prev, type: bugTypeValue }));
         }
-    }, [errorTypeValue]);
+    }, [bugTypeValue]);
 
     return (
-        <SafeArea>
+        <SafeArea edges={[]} color={theme.colors.brand.secondary}>
             <HomeMainContainer>
                 <CardContainer>
-                    <TitleText>Hata Ekle!</TitleText>
+                    <TitleText>Bug Ekle!</TitleText>
                     <ImagePickerContainer>
                         <ImagePickerButton onPress={selectImageFromLibrary}>
                             <MaterialIcons name="photo-library" size={24} color="#A5616C" />
@@ -152,24 +136,24 @@ function HomeScreen() {
                         />
                     </DropdownContainer>
 
-                    {/* Hata Türü Seçici */}
+                    {/* Bug Türü Seçici */}
                     <DropdownContainer>
                         <StyledDropDownPicker
-                            open={errorTypeOpen}
-                            value={errorTypeValue}
-                            items={errorTypeItems}
-                            setOpen={setErrorTypeOpen}
-                            setValue={setErrorTypeValue}
-                            setItems={setErrorTypeItems}
-                            placeholder="Hata tipini seçiniz"
+                            open={bugTypeOpen}
+                            value={bugTypeValue}
+                            items={bugTypeItems}
+                            setOpen={setBugTypeOpen}
+                            setValue={setBugTypeValue}
+                            setItems={setBugTypeItems}
+                            placeholder="Bug türünü seçiniz"
                         />
                     </DropdownContainer>
 
                     <TextInputStyled
-                        placeholder="Hatanıza isim veriniz"
-                        value={newError.name}
+                        placeholder="Bug'a isim veriniz"
+                        value={newBug.name}
                         onChangeText={(text) =>
-                            setNewError((prev) => ({
+                            setNewBug((prev) => ({
                                 ...prev,
                                 name: text,
                             }))
@@ -188,9 +172,9 @@ function HomeScreen() {
                                     key={_color.id}
                                     onPress={() => {
                                         setSelectedColor(_color);
-                                        setNewError((prev) => ({
+                                        setNewBug((prev) => ({
                                             ...prev,
-                                            color: { id: _color.id, name: _color.name, code: _color.code }, // Renk nesnesi
+                                            color: { id: _color.id, name: _color.name, code: _color.code },
                                         }));
                                     }}
                                 >
@@ -203,12 +187,11 @@ function HomeScreen() {
                         </ColorsContainer>
                     </ColorPickerContainer>
 
-                    <StyledPressableButton>
+                    <StyledPressableButton onPress={createNewBug}>
                         <ButtonText>
-                            Hata Ekle
+                            Bug Ekle
                         </ButtonText>
                     </StyledPressableButton>
-
                 </CardContainer>
             </HomeMainContainer>
         </SafeArea>
@@ -216,6 +199,7 @@ function HomeScreen() {
 }
 
 export default HomeScreen;
+
 
 
 /**

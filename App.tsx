@@ -24,14 +24,14 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        <AccountProvider>
 
-          <Navigation />
-          <StatusBar translucent />
+      <AccountProvider>
 
-        </AccountProvider>
-      </SafeAreaProvider>
+        <Navigation />
+        <StatusBar translucent />
+
+      </AccountProvider>
+
     </ThemeProvider>
   );
 }

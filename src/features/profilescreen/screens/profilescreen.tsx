@@ -5,6 +5,7 @@ import { launchImageLibrary, launchCamera, ImagePickerResponse, CameraOptions, I
 
 import { MaterialIcons } from '@expo/vector-icons';
 import { SafeArea } from '@src/components/main.style';
+import { theme } from '@src/theme';
 
 const ProfileScreen = () => {
 
@@ -13,7 +14,7 @@ const ProfileScreen = () => {
 
 
     return (
-        <SafeArea>
+        <SafeArea edges={[]} color={theme.colors.ui.secondary}>
             <Text>
                 profile screeennnnnn
             </Text>

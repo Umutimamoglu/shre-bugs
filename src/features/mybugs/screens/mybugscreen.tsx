@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { IBug } from 'types';
 import { BugsNavigationType } from '@src/infrastracture/navigation/types';
 import { SafeArea } from '@src/components/main.style';
+import { theme } from '@src/theme';
 
 
 const MyBugsScreen = () => {
@@ -20,7 +21,7 @@ const MyBugsScreen = () => {
 
 
     return (
-        <SafeArea>
+        <SafeArea edges={[]} color={theme.colors.brand.secondary}>
             <Text>
                 my bug acreeennn
             </Text>

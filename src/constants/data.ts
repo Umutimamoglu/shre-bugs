@@ -7,7 +7,7 @@ export const PROGRAMMING_LANGUAGES = [
     { id: 4, name: "C#", icon: ICON_SET["C#"] || "❌" },
     { id: 5, name: "C++", icon: ICON_SET["C++"] || "❌" },
 ];
-export const ERROR_TYPES = [
+export const BUG_TYPES = [
     { id: 1, name: 'Compilation Errors' },
     { id: 2, name: 'Runtime Errors' },
     { id: 3, name: 'Arithmetic Errors' },

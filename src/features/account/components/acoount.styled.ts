@@ -60,5 +60,6 @@ export const TopContainer = styled.View<TopContainerProps>`
   background-color: ${(props) => props.backgroundColor || props.theme.colors.brand.primary};
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
-  margin-horizontal: -10px;
+  margin-left: -10px;
+  margin-right: -10px;
 `;

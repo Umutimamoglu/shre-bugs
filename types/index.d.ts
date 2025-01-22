@@ -39,7 +39,7 @@ export interface ILogin {
     password: string;
 }
 
-export interface CreateError {
+export interface CreateBugPayload {
     name: string;
     isFixed: boolean;
     language: string;

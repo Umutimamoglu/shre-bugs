@@ -7,35 +7,35 @@ const { width, height } = Dimensions.get('window');
 
 
 interface HomeMainContainerProps {
-    color?: string;
-    padding?: string;
-    alignItems?: string;
-    marginTop?: string;
+  color?: string;
+  padding?: string;
+  alignItems?: string;
+  marginTop?: string;
 }
 
 export const HomeMainContainer = styled.View<HomeMainContainerProps>`
     flex: 1;
     padding: ${(props) => props.padding || "16px"};
     background-color: ${(props) =>
-        props.color || props.theme.colors.bg.primary || "#f8f8f8"};
+    props.color || props.theme.colors.bg.primary || "#f8f8f8"};
     align-items: ${(props) => props.alignItems || "center"};
     margin-top: ${(props) => props.marginTop || "0px"};
 `;
 
 
 interface CardContainerProps {
-    width?: string;
-    height?: string;
-    backgroundColor?: string;
-    marginTop?: string;
-    borderRadius?: string;
-    padding?: string;
-    shadowColor?: string;
-    shadowOffsetWidth?: number;
-    shadowOffsetHeight?: number;
-    shadowOpacity?: number;
-    shadowRadius?: number;
-    elevation?: number;
+  width?: string;
+  height?: string;
+  backgroundColor?: string;
+  marginTop?: string;
+  borderRadius?: string;
+  padding?: string;
+  shadowColor?: string;
+  shadowOffsetWidth?: number;
+  shadowOffsetHeight?: number;
+  shadowOpacity?: number;
+  shadowRadius?: number;
+  elevation?: number;
 }
 
 export const CardContainer = styled.View<CardContainerProps>`
@@ -50,7 +50,7 @@ export const CardContainer = styled.View<CardContainerProps>`
     padding: ${(props) => props.padding || "16px"};
     shadow-color: ${(props) => props.shadowColor || "#000"};
     shadow-offset: ${(props) =>
-        `${props.shadowOffsetWidth || 0}px ${props.shadowOffsetHeight || 2}px`};
+    `${props.shadowOffsetWidth || 0}px ${props.shadowOffsetHeight || 2}px`};
     shadow-opacity: ${(props) => props.shadowOpacity || 0.2};
     shadow-radius: ${(props) => props.shadowRadius || 4}px;
     elevation: ${(props) => props.elevation || 5};
@@ -80,20 +80,21 @@ export const ImagePickerButton = styled.TouchableOpacity`
 
 // Dropdown kapsayıcı (View)
 export const DropdownContainer = styled.View`
-  border-width: 1px;
-  border-color: #d3d3d3;
-  border-radius: 8px;
-  margin-top:15;
+    border-width: 1px;
+    border-color: #d3d3d3;
+    border-radius: 8px;
+    margin-top: 15px; /* Birim eklenerek düzenlendi */
 `;
+
 // Dropdown Picker
 export const StyledDropDownPicker = styled(DropDownPicker).attrs({
-    placeholderStyle: {
-        color: "#999",
-    },
-    labelStyle: {
-        fontSize: 16,
-        color: "#000",
-    },
+  placeholderStyle: {
+    color: "#999",
+  },
+  labelStyle: {
+    fontSize: 16,
+    color: "#000",
+  },
 })`
     border-width: 1px;
     border-color: #d3d3d3;
@@ -128,16 +129,16 @@ export const LabelText = styled.Text`
 
 // Giriş Kutusu (Input)
 export const TextInputStyled = styled.TextInput`
-    font-size: 16px; /* Dropdown'daki font boyutuyla aynı */
-    padding: 12px; /* Dropdown'daki padding ile aynı */
-    background-color: #faf7f6; /* Dropdown'un arka plan rengi */
-    border-color: #d3d3d3; /* Dropdown'un border rengi */
-    border-width: 1px; /* Border genişliği */
-    border-radius: 8px; /* Dropdown'daki köşe yuvarlama */
-    width: 100%; /* Genişlik tam ekran boyunca */
-    height: 40px; /* Dropdown'la uyumlu yükseklik */
-    color: #000; /* Yazı rengi */
-    margin-top: 15px; /* Yukarıdaki dropdown'la uyumlu aralık */
+    font-size: 16px;
+    padding: 12px;
+    background-color: #faf7f6;
+    border-color: #d3d3d3;
+    border-width: 1px;
+    border-radius: 8px;
+    width: 100%;
+    height: 40px;
+    color: #000;
+    margin-top: 15px; /* Birim eklenerek düzenlendi */
 `;
 
 // Renk Konteyneri
@@ -146,11 +147,10 @@ export const ColorPickerContainer = styled.View`
     background-color: #f5f5f5;
     border-radius: 8px;
     margin-bottom: 16px;
-    width: 100%; /* Konteyner genişliği */
-      margin-top:20;
-     height: 20%;
-
-  `;
+    width: 100%;
+    margin-top: 20px; /* Birim eklenerek düzenlendi */
+    height: 20%;
+`;
 
 // Buton
 export const StyledButton = styled.TouchableOpacity`
@@ -190,9 +190,9 @@ font-size:16;
 
 // Renk dairelerinin kapsayıcısı
 export const ColorsContainer = styled.View`
-flex-direction: row;
-justify-content: space-evenly;
-margin-top: 14px;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 14px; /* Birim eklenerek düzenlendi */
 `;
 
 // Renk daireleri
@@ -208,16 +208,16 @@ border-color: #000;
 
 
 interface StyledButtonProps {
-    backgroundColor?: string;
-    pressedBackgroundColor?: string;
-    width?: string;
-    height?: string;
-    borderRadius?: string;
+  backgroundColor?: string;
+  pressedBackgroundColor?: string;
+  width?: string;
+  height?: string;
+  borderRadius?: string;
 }
 
 interface ButtonTextProps {
-    color?: string;
-    fontSize?: string;
+  color?: string;
+  fontSize?: string;
 }
 
 export const ButtonContainer = styled.View`
@@ -236,16 +236,16 @@ export const StyledPressableButton = styled.Pressable<StyledButtonProps>`
 
 
 interface StyledButtonProps {
-    backgroundColor?: string;
-    pressedBackgroundColor?: string;
-    width?: string;
-    height?: string;
-    borderRadius?: string;
+  backgroundColor?: string;
+  pressedBackgroundColor?: string;
+  width?: string;
+  height?: string;
+  borderRadius?: string;
 }
 
 interface ButtonTextProps {
-    color?: string;
-    fontSize?: string;
+  color?: string;
+  fontSize?: string;
 }
 
 
