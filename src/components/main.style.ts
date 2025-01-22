@@ -6,6 +6,7 @@ import {
   MaterialCommunityIcons,
   FontAwesome,
 } from "@expo/vector-icons";
+import { theme } from "@src/theme";
 
 
 
@@ -26,8 +27,7 @@ export const SafeArea = styled(SafeAreaView).attrs<SafeAreaProps>((props) => ({
   edges: props.edges || ["right", "top", "left"],
 }))`
   flex: 1;
-
-  background-color: ${(props) => props.color || props.theme.colors.bg.secondary || "#f2f2f2"};
+  background-color: ${(props) => props.color || theme.colors.bg.primary || "#f2f2f2"};
 `;
 
 interface CenteredContainerProps {
@@ -50,7 +50,7 @@ export const MainContainer = styled.View<MainContainerProps>`
   flex: 1;
   padding: ${(props) => props.padding || "0px 0px"};
   background-color: ${(props) =>
-    props.color || props.theme.colors.bg.primary || "transparent"};
+    props.color || theme.colors.brand || "transparent"};
 `;
 
 export const RowContainer = styled.View<RowContainerProps>`

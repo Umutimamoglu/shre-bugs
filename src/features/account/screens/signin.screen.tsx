@@ -50,8 +50,8 @@ const SignInScreen = () => {
     }, []);
 
     return (
-        <SafeArea edges={['top']} color={theme.colors.bg.primary}>
-            <MainContainer color={theme.colors.bg.secondary}>
+        <SafeArea edges={['top']} color={theme.colors.brand.primary}>
+            <MainContainer color={theme.colors.brand.primary}>
                 <KeyboardCloser isEnabled>
                     {!keyboardActive && <Title />}
                     <Header title="Giriş Yap" subtitle="Hatalarını kolayca çöz" />
@@ -87,14 +87,14 @@ const SignInScreen = () => {
                     </InputsContainer>
                     <BottomContainer>
                         <Pressable onPress={navBack}>
-                            <Text style={{ textAlign: 'center', color: theme.colors.text.error }}>
+                            <Text style={{ textAlign: 'center', color: theme.colors.brand.secondary }}>
                                 Yeni bir hesap oluşturmak için
                             </Text>
                         </Pressable>
                         <CustomButton
                             onPress={handleSignIn}
                             style={{
-                                backgroundColor: theme.colors.brand.primary,
+                                backgroundColor: theme.colors.brand.secondary,
                                 marginTop: 15,
                             }}
                         >

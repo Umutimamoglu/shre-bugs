@@ -12,6 +12,8 @@ import { getColors } from "src/heplers";
 
 import { ERROR_TYPES, PROGRAMMING_LANGUAGES } from "src/constants/data";
 import { axiosInstance } from '@src/services/account/account.service';
+import { SafeArea } from '@src/components/main.style';
+import { CardContainer, HomeMainContainer } from '../components/home.styled';
 const { width, height } = Dimensions.get('window');
 const COLORS = getColors();
 
@@ -95,9 +97,32 @@ function HomeScreen() {
         }
     }, [value]);
     return (
+        <SafeArea>
+            <HomeMainContainer>
+                <CardContainer>
+
+                    <Text>
+                        {"merhababaaaaaaaaa"}
+                    </Text>
+                </CardContainer>
+
+            </HomeMainContainer>
+
+        </SafeArea>
+    );
+}
+
+
+
+
+export default HomeScreen;
+
+
+/**
+ 
+  return (
         <View style={styles.container}>
-            {/* Card View Container */}
-            <View style={styles.card}>
+             <View style={styles.card}>
                 <Text style={styles.title}>Yeni hata ekle!!!</Text>
 
                 <View style={styles.imagePickerContainer}>
@@ -107,7 +132,7 @@ function HomeScreen() {
                     </Pressable>
                 </View>
 
-                {/* Programlama Dili Seçici */}
+             
                 <View style={styles.dropdownContainer}>
                     <DropDownPicker
                         open={open}
@@ -143,8 +168,8 @@ function HomeScreen() {
                         placeholderTextColor="#000"
                     />
                 </View>
- */}
-                {/* Hata Adı Girişi */}
+ 
+               
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
@@ -346,3 +371,4 @@ const styles = StyleSheet.create({
 });
 
 export default HomeScreen;
+ */

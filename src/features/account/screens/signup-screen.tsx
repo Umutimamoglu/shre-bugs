@@ -83,7 +83,7 @@ const SignUpScreen = () => {
     }, []);
 
     return (
-        <SafeArea edges={["top"]} color={theme.colors.brand.primary}>
+        <SafeArea edges={["top"]} >
             <MainContainer color={"#D8D0D0"}>
                 <KeyboardCloser isEnabled>
                     <TopContainer>
@@ -91,7 +91,7 @@ const SignUpScreen = () => {
 
                         <Header title="Kayıt Ol" subtitle="Hatalarını kolayca çöz" />
 
-                        <InputsContainer>
+                        <InputsContainer >
                             <TextInput
                                 style={{
                                     width: 200,
