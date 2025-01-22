@@ -3,19 +3,14 @@ import { nanoid } from "nanoid/non-secure"
 import { IColor, IIcon } from "../../types"
 
 const palette = {
-    yellow500: "#FFD700", // Sarı (Drink plenty of Water)
-    pink500: "#FF69B4", // Pembe (Eat a healthy breakfast)
-    green500: "#32CD32", // Yeşil (Take vitamins)
-    red500: "#ef4444", // Kırmızı (Örnek)
-    red600: "#dc2626",
-    orange300: "#fdba74",
-    orange400: "#fb923c",
-    sky400: "#38bdf8",
-    sky500: "#0ea5e9",
-    purple500: "#a855f7",
-    purple600: "#9333ea",
+    yellow: "#CCC68E", // Sarı pastel tonu
+    pink: "#F6AAC6", // Pembe pastel tonu
+    green: "#9BE4A2", // Yeşil pastel tonu
+    red: "#A5616C", // Kırmızı pastel tonu
+    purple: "#C7A1C2", // Mor pastel tonu
+    orange: "#F6C8A4", // Turuncu pastel tonu
+    blue: "#A6D2E1", // Mavi pastel tonu
 };
-
 export const getColors = () => {
     const colors: IColor[] = Object.keys(palette).map((_paletteItem) => {
         return {

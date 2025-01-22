@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, TextInput, StyleSheet, View, Text, Dimensions } from 'react-native';
+import { Pressable, Text, TextInput } from 'react-native';
 import useSWRMutation from 'swr/mutation';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BASE_URL } from "@src/services/connections";
@@ -13,12 +13,27 @@ import { getColors } from "src/heplers";
 import { ERROR_TYPES, PROGRAMMING_LANGUAGES } from "src/constants/data";
 import { axiosInstance } from '@src/services/account/account.service';
 import { SafeArea } from '@src/components/main.style';
-import { CardContainer, HomeMainContainer } from '../components/home.styled';
-const { width, height } = Dimensions.get('window');
+import {
+    ButtonText,
+    CardContainer,
+    ColorCircle,
+    ColorLabel,
+    ColorLabelText,
+    ColorPickerContainer,
+    ColorsContainer,
+    DropdownContainer,
+    HomeMainContainer,
+    ImagePickerButton,
+    ImagePickerContainer,
+    StyledDropDownPicker,
+    StyledPressableButton,
+    TextInputStyled,
+    TitleText,
+} from '../components/home.styled';
+import { CustomButton, InputsContainer } from '@src/features/account/components/acoount.styled';
+import { theme } from '@src/theme';
+
 const COLORS = getColors();
-
-
-
 
 const CreateErrorRequest = async (url: string, { arg }: { arg: FormData }) => {
     try {
@@ -34,32 +49,41 @@ const CreateErrorRequest = async (url: string, { arg }: { arg: FormData }) => {
 };
 
 function HomeScreen() {
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState(PROGRAMMING_LANGUAGES.map((lang) => ({ label: lang.name, value: lang.name })));
+    const [languageOpen, setLanguageOpen] = useState(false);
+    const [languageValue, setLanguageValue] = useState<string | null>(null);
+    const [languageItems, setLanguageItems] = useState(
+        PROGRAMMING_LANGUAGES.map((lang) => ({ label: lang.name, value: lang.name }))
+    );
 
-    const [selectedLanguage, setSelectedLanguage] = useState('');
-    const [selectedErrorType, setSelectedErrorType] = useState('');
+    const [errorTypeOpen, setErrorTypeOpen] = useState(false);
+    const [errorTypeValue, setErrorTypeValue] = useState<string | null>(null);
+    const [errorTypeItems, setErrorTypeItems] = useState(
+        ERROR_TYPES.map((error) => ({ label: error.name, value: error.name }))
+    );
+
     const [selectedColor, setSelectedColor] = useState<IColor>(COLORS[0]);
     const [image, setImage] = useState<string>('');
     const { trigger } = useSWRMutation('api/errors/create', CreateErrorRequest);
     const { mutate } = useSWRConfig();
     const [newError, setNewError] = useState<CreateError>({
         name: '',
-        color: COLORS[0], // IColor türünde
-        language: selectedLanguage,
+        color: COLORS[0],
+        language: '',
         isFixed: false,
         image: undefined,
-        type: selectedErrorType,
-        howDidIFix: '', // Ekleyin ve başlangıçta boş bırakın
+        type: '',
+        howDidIFix: '',
     });
+    const [errorName, seterrorName] = useState<string>("")
+
+
     const createNewError = async () => {
         try {
             const formData = new FormData();
             formData.append('name', newError.name);
-            formData.append('color[id]', selectedColor.id); // Renk ID'si
-            formData.append('color[name]', selectedColor.name); // Renk adı
-            formData.append('color[code]', selectedColor.code); // Renk kodu
+            formData.append('color[id]', selectedColor.id);
+            formData.append('color[name]', selectedColor.name);
+            formData.append('color[code]', selectedColor.code);
             formData.append('isFixed', newError.isFixed.toString());
             formData.append('language', newError.language);
             formData.append('type', newError.type);
@@ -80,6 +104,7 @@ function HomeScreen() {
             console.error('Error creating new error:', error);
         }
     };
+
     const selectImageFromLibrary = async () => {
         const options: ImageLibraryOptions = { mediaType: 'photo', quality: 1 };
         launchImageLibrary(options, (response) => {
@@ -91,29 +116,104 @@ function HomeScreen() {
     };
 
     useEffect(() => {
-        if (value) {
-            setSelectedLanguage(value); // Seçilen dil state'ini günceller
-            setNewError((prev) => ({ ...prev, language: value })); // `newError` state'ini günceller
+        if (languageValue) {
+            setNewError((prev) => ({ ...prev, language: languageValue }));
         }
-    }, [value]);
+    }, [languageValue]);
+
+    useEffect(() => {
+        if (errorTypeValue) {
+            setNewError((prev) => ({ ...prev, type: errorTypeValue }));
+        }
+    }, [errorTypeValue]);
+
     return (
         <SafeArea>
             <HomeMainContainer>
                 <CardContainer>
+                    <TitleText>Hata Ekle!</TitleText>
+                    <ImagePickerContainer>
+                        <ImagePickerButton onPress={selectImageFromLibrary}>
+                            <MaterialIcons name="photo-library" size={24} color="#A5616C" />
+                            <Text> {" Galeri"} </Text>
+                        </ImagePickerButton>
+                    </ImagePickerContainer>
 
-                    <Text>
-                        {"merhababaaaaaaaaa"}
-                    </Text>
+                    {/* Programlama Dili Seçici */}
+                    <DropdownContainer>
+                        <StyledDropDownPicker
+                            open={languageOpen}
+                            value={languageValue}
+                            items={languageItems}
+                            setOpen={setLanguageOpen}
+                            setValue={setLanguageValue}
+                            setItems={setLanguageItems}
+                            placeholder="Yazılım dili seçin"
+                        />
+                    </DropdownContainer>
+
+                    {/* Hata Türü Seçici */}
+                    <DropdownContainer>
+                        <StyledDropDownPicker
+                            open={errorTypeOpen}
+                            value={errorTypeValue}
+                            items={errorTypeItems}
+                            setOpen={setErrorTypeOpen}
+                            setValue={setErrorTypeValue}
+                            setItems={setErrorTypeItems}
+                            placeholder="Hata tipini seçiniz"
+                        />
+                    </DropdownContainer>
+
+                    <TextInputStyled
+                        placeholder="Hatanıza isim veriniz"
+                        value={newError.name}
+                        onChangeText={(text) =>
+                            setNewError((prev) => ({
+                                ...prev,
+                                name: text,
+                            }))
+                        }
+                        placeholderTextColor={theme.colors.text.primary}
+                        keyboardType="default"
+                    />
+
+                    <ColorPickerContainer>
+                        <ColorLabel backgroundColor={selectedColor.code}>
+                            <ColorLabelText>Colors</ColorLabelText>
+                        </ColorLabel>
+                        <ColorsContainer>
+                            {COLORS.map((_color: IColor) => (
+                                <Pressable
+                                    key={_color.id}
+                                    onPress={() => {
+                                        setSelectedColor(_color);
+                                        setNewError((prev) => ({
+                                            ...prev,
+                                            color: { id: _color.id, name: _color.name, code: _color.code }, // Renk nesnesi
+                                        }));
+                                    }}
+                                >
+                                    <ColorCircle
+                                        backgroundColor={_color.code}
+                                        isSelected={_color.name === selectedColor.name}
+                                    />
+                                </Pressable>
+                            ))}
+                        </ColorsContainer>
+                    </ColorPickerContainer>
+
+                    <StyledPressableButton>
+                        <ButtonText>
+                            Hata Ekle
+                        </ButtonText>
+                    </StyledPressableButton>
+
                 </CardContainer>
-
             </HomeMainContainer>
-
         </SafeArea>
     );
 }
-
-
-
 
 export default HomeScreen;
 

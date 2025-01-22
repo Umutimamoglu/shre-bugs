@@ -15,6 +15,7 @@ interface CustomButtonProps {
 }
 
 export const InputsContainer = styled.View`
+  margin-top:15;
   width: 100%;
   align-items: center;
   margin-left: 5px;

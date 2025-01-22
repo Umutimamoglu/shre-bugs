@@ -51,6 +51,8 @@ export const MainContainer = styled.View<MainContainerProps>`
   padding: ${(props) => props.padding || "0px 0px"};
   background-color: ${(props) =>
     props.color || theme.colors.brand || "transparent"};
+    align-items: center;
+    justify-content: center;
 `;
 
 export const RowContainer = styled.View<RowContainerProps>`
