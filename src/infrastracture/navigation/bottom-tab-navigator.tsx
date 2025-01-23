@@ -19,16 +19,10 @@ const BottomTabNavigator = () => {
                 tabBarActiveTintColor: "black",
                 tabBarInactiveTintColor: "gray",
                 tabBarHideOnKeyboard: true,
-                tabBarStyle: {
-                    backgroundColor: theme.colors.ui.secondary,
-                    borderTopColor: "transparent",
-                },
-                headerTitle: route.name, // Başlık olarak ekranın adını kullan
-                headerStyle: {
-                    backgroundColor: theme.colors.ui.tertiary,
-                },
 
-                headerTintColor: theme.colors.text.primary,
+                headerShown: false,
+
+
             })}
         >
             {/* Home Tab */}

@@ -9,6 +9,8 @@ import { useBug } from '@src/services/bugs/bugs.context';
 import { BugsNavigationType } from '@src/infrastracture/navigation/types';
 import Bug from '../components/bug';
 import { IBug } from 'types';
+import { SafeArea } from '@src/components/main.style';
+import { theme } from '@src/theme';
 
 const MyBugsScreen = () => {
     const { bugs, refreshBugs } = useBug(); // Context'ten verileri alıyoruz
@@ -32,47 +34,51 @@ const MyBugsScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
-            {/* Filtre ve Checkbox */}
-            <View style={styles.filterRow}>
-                <Pressable style={styles.filterButton}>
-                    <View style={styles.filterContent}>
-                        <Text style={styles.filterText}>Filtre</Text>
-                        <AntDesign name="filter" size={20} color="black" />
-                    </View>
-                    <Pressable onPress={() => setIsChecked(!isChecked)}>
-                        <View style={styles.checkboxWrapper}>
-                            {isChecked ? (
-                                <FontAwesome6 name="square-check" size={23} color="black" />
-                            ) : (
-                                <Feather name="square" size={24} color="black" />
-                            )}
-                        </View>
-                    </Pressable>
-                </Pressable>
-            </View>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
 
-            {/* Arama Çubuğu */}
-            <View style={styles.searchRow}>
-                <FontAwesome5 name="search" size={20} color="gray" />
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChangeText={(text) => setSearchQuery(text)}
+
+            <View style={styles.container}>
+                {/* Filtre ve Checkbox */}
+                <View style={styles.filterRow}>
+                    <Pressable style={styles.filterButton}>
+                        <View style={styles.filterContent}>
+                            <Text style={styles.filterText}>Filtre</Text>
+                            <AntDesign name="filter" size={20} color="black" />
+                        </View>
+                        <Pressable onPress={() => setIsChecked(!isChecked)}>
+                            <View style={styles.checkboxWrapper}>
+                                {isChecked ? (
+                                    <FontAwesome6 name="square-check" size={23} color="black" />
+                                ) : (
+                                    <Feather name="square" size={24} color="black" />
+                                )}
+                            </View>
+                        </Pressable>
+                    </Pressable>
+                </View>
+
+                {/* Arama Çubuğu */}
+                <View style={styles.searchRow}>
+                    <FontAwesome5 name="search" size={20} color="gray" />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChangeText={(text) => setSearchQuery(text)}
+                    />
+                </View>
+
+                {/* Liste */}
+                <FlatList
+                    data={filteredData}
+                    keyExtractor={(item) => item._id}
+                    renderItem={renderItem}
+                    ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
                 />
             </View>
-
-            {/* Liste */}
-            <FlatList
-                data={filteredData}
-                keyExtractor={(item) => item._id}
-                renderItem={renderItem}
-                ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
+        </SafeArea>
     );
 };
 

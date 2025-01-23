@@ -112,7 +112,7 @@ function HomeScreen() {
     }, [bugTypeValue]);
 
     return (
-        <SafeArea edges={[]} color={theme.colors.ui.tertiary}>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
             <HomeMainContainer>
                 <CardContainer>
                     <TitleText>Bug Ekle!</TitleText>

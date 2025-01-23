@@ -19,6 +19,7 @@ import { useBug } from '@src/services/bugs/bugs.context';
 import AllBug from '../components/allBug';
 import { SafeArea } from '@src/components/main.style';
 import NavigateBack from '../components/navigate-back';
+import { theme } from '@src/theme';
 
 const FeedScreen = () => {
     const navigation = useNavigation<AllBugsNavigationType>();
@@ -69,7 +70,7 @@ const FeedScreen = () => {
     };
 
     return (
-        <SafeArea>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
 
             <View style={styles.container}>
 
@@ -117,7 +118,7 @@ export default FeedScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#a1a1aa', // Örnek amaçlı zinc400 rengini Hex olarak tanımladık
+        backgroundColor: theme.colors.ui.secondary, // Örnek amaçlı zinc400 rengini Hex olarak tanımladık
     },
     headerContainer: {
         flexDirection: 'row',
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     },
     searchBarContainer: {
         flexDirection: 'row',
-        backgroundColor: '#a1a1aa',
+        backgroundColor: theme.colors.ui.secondary,
         paddingHorizontal: 16,
         alignItems: 'center',
         marginBottom: 16,

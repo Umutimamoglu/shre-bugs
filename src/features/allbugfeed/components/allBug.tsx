@@ -1,75 +1,103 @@
 import React from 'react';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons'; // Heart icon için
+
 import { AllBugsNavigationType } from '@src/infrastracture/navigation/types';
 import { IAllBugs } from 'types';
 
-
 type BugProps = {
-    bug: IAllBugs
+    bug: IAllBugs;
 };
 
 const AllBug = ({ bug }: BugProps) => {
     const navigation = useNavigation<AllBugsNavigationType>();
 
     const navigateToBugDetailScreen = () => {
-        navigation.navigate("AllBugDetail", { bug });
+        navigation.navigate('AllBugDetail', { bug });
     };
 
     const formattedDate = new Date(bug.createdAt).toLocaleDateString();
     const formattedTime = new Date(bug.createdAt).toLocaleTimeString();
 
+    // Metni belli bir karakterden sonra kesmek için
     const truncateText = (text: string, limit: number) => {
         return text.length > limit ? text.substring(0, limit) + '...' : text;
     };
 
     return (
-        <Pressable onPress={navigateToBugDetailScreen} style={[styles.container, { backgroundColor: bug.color.code }]}>
-            <View style={styles.headerRow}>
-                <View style={styles.rowItem}>
-                    <Text style={styles.text}>{bug.user.name}</Text>
-                    <Text style={styles.text}>{formattedDate}</Text>
-                    <Text style={styles.text}>{formattedTime}</Text>
-                </View>
+        <View style={styles.wrapper}>
+            {/* Sol taraftaki Heart ikonu */}
+            <View style={styles.iconWrapper}>
+                <FontAwesome name="heart" size={24} color={bug.color.code} />
             </View>
 
-            <View style={styles.detailRow}>
-                <Text style={styles.text}>{truncateText(bug.language, 10)}</Text>
-                <Text style={styles.text}>{truncateText(bug.type, 10)}</Text>
-                <Text style={styles.text}>{truncateText(bug.name, 10)}</Text>
-            </View>
-        </Pressable>
+            {/* Sağ taraftaki kartın tamamı */}
+            <Pressable onPress={navigateToBugDetailScreen} style={[styles.cardContainer, { borderColor: bug.color.code }]}>
+                {/* Kartın üst kısmı (beyaz) */}
+                <View style={[styles.topSection]}>
+                    <Text style={styles.languageAndType}>
+                        {truncateText(bug.language, 10)}{'  '}
+                        {truncateText(bug.type, 15)}
+                    </Text>
+                    <Text style={styles.bugName}>{truncateText(bug.name, 30)}</Text>
+                </View>
+
+                {/* Kartın alt kısmı (renkli) */}
+                <View style={[styles.bottomSection, { backgroundColor: bug.color.code }]}>
+                    <Text style={styles.bottomText}>
+                        {bug.user.name} {'  '}
+                        {formattedDate} {'  '}
+                        {formattedTime}
+                    </Text>
+                </View>
+            </Pressable>
+        </View>
     );
 };
 
+export default AllBug;
+
 const styles = StyleSheet.create({
-    container: {
-        height: 80,
-        padding: 13,
-        borderRadius: 16,
-        marginBottom: 10,
-    },
-    headerRow: {
+    wrapper: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        marginVertical: 8, // Kartlar arasına dikey boşluk
     },
-    rowItem: {
-        flexDirection: 'row',
+    iconWrapper: {
+        width: 32,        // İkonun kapsayıcısı
         alignItems: 'center',
-        padding: 1,
+        justifyContent: 'center',
+        marginRight: 4,   // Karttan biraz ayrık dursun
     },
-    detailRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 1,
+    cardContainer: {
+        flex: 1,
+        borderWidth: 2,            // Renkli kenarlık
+        borderRadius: 8,
+        overflow: 'hidden',        // Köşe yuvarlamayı korumak için
     },
-    text: {
+    topSection: {
+        backgroundColor: '#fff',   // Üst kısım beyaz
+        paddingVertical: 8,
+        paddingHorizontal: 8,
+    },
+    languageAndType: {
         fontSize: 14,
-        fontWeight: '600',
-        marginRight: 10,
+        fontWeight: '700',
+        color: 'black',
+        marginBottom: 4,
+    },
+    bugName: {
+        fontSize: 14,
+        fontWeight: '500',
         color: 'black',
     },
+    bottomSection: {
+        paddingVertical: 6,
+        paddingHorizontal: 8,
+    },
+    bottomText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#fff',
+    },
 });
-
-export default AllBug;
