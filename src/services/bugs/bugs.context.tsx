@@ -1,23 +1,55 @@
-import React, { createContext, useContext, useState } from "react";
-import { CreateBugPayload, createBugRequest } from "./bugs.service";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { getMyBugsRequest } from "./bugs.service";
+import { IBug } from "types";
 
 interface BugContextProps {
-    createBug: (payload: CreateBugPayload) => Promise<void>;
+    bugs: IBug[] | null;
+    isLoading: boolean;
+    error: string | null;
+    refreshBugs: () => Promise<void>;
 }
 
 const BugContext = createContext<BugContextProps | undefined>(undefined);
 
 export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const createBug = async (payload: CreateBugPayload) => {
-        await createBugRequest(payload);
+    const [bugs, setBugs] = useState<IBug[] | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchBugs = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const bugs = await getMyBugsRequest();
+            setBugs(bugs);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Unknown error occurred");
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    const refreshBugs = async () => {
+        await fetchBugs();
+    };
+
+    useEffect(() => {
+        fetchBugs();
+    }, []);
 
     return (
         <BugContext.Provider
             value={{
-                createBug
-
-            }}>
+                bugs,
+                isLoading,
+                error,
+                refreshBugs,
+            }}
+        >
             {children}
         </BugContext.Provider>
     );

@@ -1,5 +1,7 @@
+import { IBug } from "types";
 import { axiosInstance } from "../account/account.service";
 import { BASE_URL } from "../connections";
+import { AxiosError } from "axios";
 
 export interface CreateBugPayload {
     name: string;
@@ -53,8 +55,26 @@ export const createBugRequest = async (payload: CreateBugPayload) => {
     }
 };
 
-
-
+export const getMyBugsRequest = async (): Promise<IBug[]> => {
+    try {
+        console.log("Axios request headers:", axiosInstance.defaults.headers.common); // Header'ları logla
+        const response = await axiosInstance.get(`${BASE_URL}/api/bugs/getMyErrors`);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error("Axios error while fetching bugs:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                headers: error.response?.headers,
+            });
+            throw new Error(`Error fetching bugs: ${error.response?.data?.message || "Unknown error occurred"}`);
+        } else {
+            console.error("Unexpected error:", error);
+            throw new Error("An unexpected error occurred while fetching bugs.");
+        }
+    }
+};
 const logFormData = (formData: FormData) => {
     const entries: any[] = [];
     formData.forEach((value, key) => {

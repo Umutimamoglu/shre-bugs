@@ -25,9 +25,10 @@ const BottomTabNavigator = () => {
                 },
                 headerTitle: route.name, // Başlık olarak ekranın adını kullan
                 headerStyle: {
-                    backgroundColor: theme.colors.bg.primary,
+                    backgroundColor: theme.colors.ui.tertiary,
                 },
-                headerTintColor: "black",
+
+                headerTintColor: theme.colors.text.primary,
             })}
         >
             {/* Home Tab */}
@@ -45,20 +46,7 @@ const BottomTabNavigator = () => {
                 }}
             />
 
-            {/* Feed Tab */}
-            <Tab.Screen
-                name="Feed"
-                component={AllBugsStackNavigator}
-                options={{
-                    tabBarIcon: ({ color, focused }) => (
-                        <MaterialIcons
-                            name="rss-feed"
-                            size={focused ? 28 : 24} // Aktifken daha büyük göster
-                            color={focused ? "#CCC68E" : color} // Aktifken özel renk
-                        />
-                    ),
-                }}
-            />
+
 
             {/* MyBugs Tab */}
             <Tab.Screen
@@ -74,7 +62,20 @@ const BottomTabNavigator = () => {
                     ),
                 }}
             />
-
+            {/* Feed Tab */}
+            <Tab.Screen
+                name="Feed"
+                component={AllBugsStackNavigator}
+                options={{
+                    tabBarIcon: ({ color, focused }) => (
+                        <MaterialIcons
+                            name="rss-feed"
+                            size={focused ? 28 : 24} // Aktifken daha büyük göster
+                            color={focused ? "#CCC68E" : color} // Aktifken özel renk
+                        />
+                    ),
+                }}
+            />
             {/* Profile Tab */}
             <Tab.Screen
                 name="Profile"

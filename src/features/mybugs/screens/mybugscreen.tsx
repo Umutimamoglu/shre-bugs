@@ -21,7 +21,7 @@ const MyBugsScreen = () => {
 
 
     return (
-        <SafeArea edges={[]} color={theme.colors.brand.secondary}>
+        <SafeArea edges={[]} color={theme.colors.ui.tertiary}>
             <Text>
                 my bug acreeennn
             </Text>

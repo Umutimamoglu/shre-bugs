@@ -6,12 +6,15 @@ import AuthStackNavigator from "./auth-stack-navigator";
 import { ActivityIndicator, View } from "react-native";
 
 export const Navigation = () => {
-    if (!AccountContext) {
-        throw new Error("AccountContext must be used within an AccountProvider");
-    }
-
     const { user, isLoading } = useContext(AccountContext);
 
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" color="#A5616C" />
+            </View>
+        );
+    }
 
     return (
         <NavigationContainer>
@@ -19,5 +22,6 @@ export const Navigation = () => {
         </NavigationContainer>
     );
 };
+
 
 export default Navigation;

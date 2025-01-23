@@ -1,11 +1,9 @@
-import React, { useState, createContext, ReactNode } from "react";
+import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RegisterUserTypes } from "types";
-import { registerUser, loginUser } from "./account.service";
+import * as SecureStore from "expo-secure-store";
+import { RegisterUserTypes, LoginUserTypes } from "types";
+import { registerUser, loginUser, deleteToken, axiosInstance } from "./account.service";
 
-
-
-// Context Tipi
 interface AccountContextType {
     isLoading: boolean;
     error: string | null;
@@ -23,33 +21,57 @@ interface AccountContextType {
     logout: () => Promise<void>;
 }
 
+export const AccountContext = createContext<AccountContextType>(
+    {} as AccountContextType
+);
 
-export const AccountContext = createContext<AccountContextType>({} as AccountContextType);
-
-
-if (!AccountContext) {
-    throw new Error("AccountContext must be used within an AccountProvider");
-}
-// Provider Component
 export const AccountProvider = ({ children }: { children: ReactNode }) => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<RegisterUserTypes | null>(null);
 
-    // Register Function
-    const register = async (email: string, password: string, name: string, image: string | null, positionTitle: string) => {
+    useEffect(() => {
+        const loadUserFromStorage = async () => {
+            try {
+                const storedUser = await AsyncStorage.getItem("@user");
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                    console.log("User restored from storage:", JSON.parse(storedUser));
+                }
+            } catch (err) {
+                console.error("Error loading user from AsyncStorage:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadUserFromStorage();
+    }, []);
+
+    const register = async (
+        email: string,
+        password: string,
+        name: string,
+        image: string | null,
+        positionTitle: string
+    ) => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const registeredUser = await registerUser({ email, name, password, image, positionTitle });
+            const registeredUser = await registerUser({
+                email,
+                name,
+                password,
+                image,
+                positionTitle,
+            });
             setUser(registeredUser);
-            console.log("User registered and set:", registeredUser);
+            await AsyncStorage.setItem("@user", JSON.stringify(registeredUser));
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
             }
-            console.error("Error during registration:", err);
         } finally {
             setIsLoading(false);
         }
@@ -61,35 +83,28 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             const loggedInUser = await loginUser({ email, password });
-
-            // Kullanıcı bilgisini AsyncStorage'da sakla
             await AsyncStorage.setItem("@user", JSON.stringify(loggedInUser));
-
-            // Kullanıcı bilgisini AccountContext'e set et
             setUser(loggedInUser);
-            console.log("User logged in and set:", loggedInUser);
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
             }
-            console.error("Error during login:", err);
         } finally {
             setIsLoading(false);
         }
     };
 
-
-    // Logout Function
     const logout = async () => {
         setIsLoading(true);
         setError(null);
 
         try {
-            await AsyncStorage.removeItem("blossom_user_token");
+            await AsyncStorage.removeItem("@user");
+            await deleteToken("blossom_user_token");
+            delete axiosInstance.defaults.headers.common["Authorization"];
             setUser(null);
-            console.log("User logged out.");
         } catch (err) {
-            console.error("Error during logout:", err);
+            setError("Logout failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
