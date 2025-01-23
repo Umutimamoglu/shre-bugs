@@ -1,4 +1,4 @@
-import { IBug } from "types";
+import { IAllBugs, IBug } from "types";
 import { axiosInstance } from "../account/account.service";
 import { BASE_URL } from "../connections";
 import { AxiosError } from "axios";
@@ -20,6 +20,12 @@ export interface CreateBugPayload {
         type: string;
     };
 }
+
+
+type BugProps = {
+    bug: IBug
+};
+
 
 export const createBugRequest = async (payload: CreateBugPayload) => {
     const formData = new FormData();
@@ -57,7 +63,7 @@ export const createBugRequest = async (payload: CreateBugPayload) => {
 
 export const getMyBugsRequest = async (): Promise<IBug[]> => {
     try {
-        console.log("Axios request headers:", axiosInstance.defaults.headers.common); // Header'ları logla
+
         const response = await axiosInstance.get(`${BASE_URL}/api/bugs/getMyErrors`);
         return response.data;
     } catch (error) {
@@ -75,6 +81,45 @@ export const getMyBugsRequest = async (): Promise<IBug[]> => {
         }
     }
 };
+
+export const getAllBugsRequest = async (): Promise<IAllBugs[]> => {
+    try {
+
+        const response = await axiosInstance.get(`${BASE_URL}/api/bugs/getAllErrors`);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error("Axios error while fetching bugs:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                headers: error.response?.headers,
+            });
+            throw new Error(`Error fetching bugs: ${error.response?.data?.message || "Unknown error occurred"}`);
+        } else {
+            console.error("Unexpected error:", error);
+            throw new Error("An unexpected error occurred while fetching bugs.");
+        }
+    }
+};
+
+
+
+export const deleteBugRequest = async (bugId: string): Promise<void> => {
+    try {
+        const response = await axiosInstance.delete(`/api/errors/deleteError/${bugId}`);
+        if (response.status === 200) {
+            console.log("Bug deleted successfully");
+        } else {
+            throw new Error("Failed to delete bug");
+        }
+    } catch (error) {
+        console.error("Error while deleting bug:", error);
+        throw error;
+    }
+};
+
+
 const logFormData = (formData: FormData) => {
     const entries: any[] = [];
     formData.forEach((value, key) => {
