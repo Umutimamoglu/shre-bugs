@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, Pressable, View, TextInput, Text, StyleSheet } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -9,8 +9,25 @@ import { useBug } from '@src/services/bugs/bugs.context';
 import { BugsNavigationType } from '@src/infrastracture/navigation/types';
 import Bug from '../components/bug';
 import { IBug } from 'types';
-import { SafeArea } from '@src/components/main.style';
+import {
+
+    Container,
+    FilterRow,
+    FilterButton,
+    FilterContent,
+    FilterText,
+    CheckboxWrapper,
+    SearchRow,
+    SearchInput,
+    ListContainer,
+    ItemSeparator,
+    TopContainer,
+    BottomContainer,
+} from '@src/features/mybugs/components/mybug.styled'; // Önceden tanımlı styled-components dosyasından geliyor
 import { theme } from '@src/theme';
+import { SafeArea } from '@src/components/main.style';
+
+
 
 const MyBugsScreen = () => {
     const { bugs, refreshBugs } = useBug(); // Context'ten verileri alıyoruz
@@ -34,110 +51,57 @@ const MyBugsScreen = () => {
     );
 
     return (
-        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
+        <SafeArea edges={[]} color={theme.colors.ui.secondary}>
 
-
-            <View style={styles.container}>
+            <Container>
                 {/* Filtre ve Checkbox */}
-                <View style={styles.filterRow}>
-                    <Pressable style={styles.filterButton}>
-                        <View style={styles.filterContent}>
-                            <Text style={styles.filterText}>Filtre</Text>
-                            <AntDesign name="filter" size={20} color="black" />
-                        </View>
-                        <Pressable onPress={() => setIsChecked(!isChecked)}>
-                            <View style={styles.checkboxWrapper}>
-                                {isChecked ? (
-                                    <FontAwesome6 name="square-check" size={23} color="black" />
-                                ) : (
-                                    <Feather name="square" size={24} color="black" />
-                                )}
-                            </View>
-                        </Pressable>
-                    </Pressable>
-                </View>
+                <TopContainer>
 
-                {/* Arama Çubuğu */}
-                <View style={styles.searchRow}>
-                    <FontAwesome5 name="search" size={20} color="gray" />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChangeText={(text) => setSearchQuery(text)}
-                    />
-                </View>
 
+                    <FilterRow>
+                        <FilterButton>
+                            <FilterContent>
+                                <FilterText>Filtre</FilterText>
+                                <AntDesign name="filter" size={20} color="black" />
+                            </FilterContent>
+                            <Pressable onPress={() => setIsChecked(!isChecked)}>
+                                <CheckboxWrapper>
+                                    {isChecked ? (
+                                        <FontAwesome6 name="square-check" size={23} color="black" />
+                                    ) : (
+                                        <Feather name="square" size={24} color="black" />
+                                    )}
+                                </CheckboxWrapper>
+                            </Pressable>
+                        </FilterButton>
+                    </FilterRow>
+
+                    {/* Arama Çubuğu */}
+                    <SearchRow>
+                        <FontAwesome5 name="search" size={20} color="gray" />
+                        <SearchInput
+                            placeholder="Ara..."
+                            value={searchQuery}
+                            onChangeText={(text) => setSearchQuery(text)}
+                        />
+                    </SearchRow>
+                </TopContainer>
                 {/* Liste */}
-                <FlatList
-                    data={filteredData}
-                    keyExtractor={(item) => item._id}
-                    renderItem={renderItem}
-                    ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-                    contentContainerStyle={styles.listContainer}
-                    showsVerticalScrollIndicator={false}
-                />
-            </View>
+                <BottomContainer>
+
+
+                    <FlatList
+                        data={filteredData}
+                        keyExtractor={(item) => item._id}
+                        renderItem={renderItem}
+                        ItemSeparatorComponent={() => <ItemSeparator />}
+                        contentContainerStyle={{ paddingBottom: 16 }}
+                        showsVerticalScrollIndicator={false}
+                    />
+                </BottomContainer>
+            </Container>
         </SafeArea>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f4f4f4',
-    },
-    filterRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#d1d1d1',
-        padding: 10,
-    },
-    filterButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#e0e0e0',
-        borderRadius: 25,
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-    },
-    filterContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginHorizontal: 10,
-    },
-    filterText: {
-        fontSize: 18,
-        marginRight: 5,
-        color: 'black',
-    },
-    checkboxWrapper: {
-        marginLeft: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    searchRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#d1d1d1',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-    },
-    searchInput: {
-        flex: 1,
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 10,
-        marginLeft: 10,
-        paddingLeft: 10,
-    },
-    listContainer: {
-        paddingHorizontal: 10,
-    },
-    itemSeparator: {
-        height: 14,
-    },
-});
 
 export default MyBugsScreen;

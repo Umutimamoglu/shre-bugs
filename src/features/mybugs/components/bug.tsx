@@ -40,7 +40,7 @@ const Bug = ({ bug }: BugProps) => {
         <Pressable onPress={navigateToBugDetailScreen}>
             <View style={[styles.container, { backgroundColor: bug.color.code }]}>
                 <View style={styles.row}>
-                    <View style={styles.row}>
+                    <View style={styles.rowContent}>
                         <Text style={styles.text}>
                             {truncateText(bug.language, 5)}
                         </Text>
@@ -50,19 +50,20 @@ const Bug = ({ bug }: BugProps) => {
                         <Text style={styles.text}>
                             {truncateText(bug.name, 10)}
                         </Text>
-                        <Pressable
-                            onPress={handleDelete} // Silme işlemini çağır
-                            onPressIn={() => setIsPressed(true)}
-                            onPressOut={() => setIsPressed(false)}
-                            style={({ pressed }) => [
-                                styles.trashIcon,
-                                pressed && styles.pressedIcon,
-                                isPressed && styles.pressedIcon,
-                            ]}
-                        >
-                            <EvilIcons name="trash" size={24} color="black" />
-                        </Pressable>
                     </View>
+
+                    <Pressable
+                        onPress={handleDelete} // Silme işlemini çağır
+                        onPressIn={() => setIsPressed(true)}
+                        onPressOut={() => setIsPressed(false)}
+                        style={({ pressed }) => [
+                            styles.trashIcon,
+                            pressed && styles.pressedIcon,
+                            isPressed && styles.pressedIcon,
+                        ]}
+                    >
+                        <EvilIcons name="trash" size={24} color="black" />
+                    </Pressable>
                 </View>
             </View>
         </Pressable>
@@ -80,6 +81,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
     },
+    rowContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     text: {
         fontSize: 14,
         fontWeight: '600',
@@ -89,6 +94,7 @@ const styles = StyleSheet.create({
     trashIcon: {
         opacity: 1,
         transform: [{ scale: 1 }],
+        marginRight: 5, // Sağdan 5 birim içerde
     },
     pressedIcon: {
         opacity: 0.5,

@@ -17,7 +17,7 @@ const ProfileScreen = () => {
 
 
     return (
-        <SafeArea edges={[]} color={theme.colors.ui.tertiary}>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
             <Text>
                 profile screeennnnnn
 
