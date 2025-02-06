@@ -119,6 +119,24 @@ export const deleteBugRequest = async (bugId: string): Promise<void> => {
     }
 };
 
+export const updateBugRequest = async (bugId: string, updatedFields: Partial<IBug>): Promise<IBug> => {
+    try {
+        const response = await axiosInstance.put(`${BASE_URL}/api/bugs/updateError/${bugId}`, updatedFields);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error("Axios error while updating bug:", {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+            });
+            throw new Error(`Error updating bug: ${error.response?.data?.message || "Unknown error occurred"}`);
+        } else {
+            console.error("Unexpected error:", error);
+            throw new Error("An unexpected error occurred while updating bug.");
+        }
+    }
+};
 
 const logFormData = (formData: FormData) => {
     const entries: any[] = [];

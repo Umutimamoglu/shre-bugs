@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { CreateBugPayload, createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest } from "./bugs.service";
+import { CreateBugPayload, createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest } from "./bugs.service";
 import { IBug, IAllBugs } from "types";
 
 interface BugContextProps {
@@ -9,6 +9,7 @@ interface BugContextProps {
     error: string | null;
     refreshBugs: () => Promise<void>;
     refreshAllBugs: () => Promise<void>;
+    updateBug: (bugId: string, updatedFields: Partial<IBug>) => Promise<void>;
     createBug: (payload: CreateBugPayload) => Promise<void>;
     deleteBug: (bugId: string) => Promise<void>;
 }
@@ -80,6 +81,23 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     };
 
+    const updateBug = async (bugId: string, updatedFields: Partial<IBug>) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const updatedBug = await updateBugRequest(bugId, updatedFields);
+            setBugs((prevBugs) =>
+                prevBugs ? prevBugs.map((bug) => (bug._id === bugId ? { ...bug, ...updatedFields } : bug)) : null
+            );
+            console.log("Bug updated successfully");
+        } catch (error) {
+            console.error("Error while updating bug:", error);
+            setError("Failed to update bug");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const deleteBug = async (bugId: string) => {
         setIsLoading(true);
         setError(null);
@@ -113,6 +131,7 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 refreshBugs,
                 refreshAllBugs,
                 createBug,
+                updateBug,
                 deleteBug,
             }}
         >

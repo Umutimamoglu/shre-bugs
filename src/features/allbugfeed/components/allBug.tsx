@@ -46,9 +46,9 @@ const AllBug = ({ bug }: BugProps) => {
                 {/* Kartın alt kısmı (renkli) */}
                 <View style={[styles.bottomSection, { backgroundColor: bug.color.code }]}>
                     <Text style={styles.bottomText}>
-                        {bug.user.name} {'  '}
+                        {bug.user?.name ?? "Unknown User"} {'  '}
                         {formattedDate} {'  '}
-                        {formattedTime}
+                        {formattedTime} {'  '}
                     </Text>
                 </View>
             </Pressable>

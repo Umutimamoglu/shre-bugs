@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 interface ContainerProps {
-    backgroundColor?: string;
+  backgroundColor?: string;
 }
 
 export const Container = styled(SafeAreaView) <ContainerProps>`
@@ -25,10 +25,10 @@ export const FilterRow = styled.View`
 `;
 
 interface FilterButtonProps {
-    backgroundColor?: string;
-    borderRadius?: string;
-    paddingHorizontal?: string;
-    paddingVertical?: string;
+  backgroundColor?: string;
+  borderRadius?: string;
+  paddingHorizontal?: string;
+  paddingVertical?: string;
 }
 
 export const FilterButton = styled.Pressable<FilterButtonProps>`
@@ -102,3 +102,4 @@ export const ListContainer = styled.FlatList`
 export const ItemSeparator = styled.View`
   height: 14px;
 `;
+

@@ -56,7 +56,7 @@ const FeedScreen = () => {
         bug.language.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // FlatList item render metodu
+
     const renderItem = ({ item }: { item: IAllBugs }) => (
         <Pressable onPress={() => setSelectedBug(item)}>
             <AllBug bug={item} />
@@ -64,7 +64,7 @@ const FeedScreen = () => {
         </Pressable>
     );
 
-    // "Favoriler" ekranına git
+
     const goToFavoriBugsScreen = () => {
         navigation.navigate("FavoriBugs");
     };
