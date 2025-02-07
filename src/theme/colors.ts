@@ -12,6 +12,8 @@ export const colors = {
         primary: "#FFFFFF", // Beyaz zemin
         secondary: "#EDEDED", // Form ve kartlar için açık gri
         tertiary: "#F5F5F5", // Çok hafif gri ton
+        tertiary2: "#F5F5FF", // Çok hafif gri ton
+        tertiary3: "#F1F1FF", // Çok hafif gri ton
         quaternary: "#FAFAFA", // Kartlar için daha açık bir beyaz ton
         disabled: "#C0C0C0", // Pasif butonlar için
         error: "#FF6F61", // Hata kırmızı tonu

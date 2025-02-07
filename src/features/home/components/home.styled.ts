@@ -2,6 +2,7 @@ import styled from "styled-components/native";
 import { SafeAreaView, SafeAreaViewProps } from "react-native-safe-area-context";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Dimensions } from "react-native";
+import { theme } from "@src/theme";
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,7 +18,7 @@ export const HomeMainContainer = styled.View<HomeMainContainerProps>`
     flex: 1;
     padding: ${(props) => props.padding || "16px"};
     background-color: ${(props) =>
-    props.color || props.theme.colors.bg.primary || "#f8f8f8"};
+    props.color || theme.colors.ui.tertiary3};
     align-items: ${(props) => props.alignItems || "center"};
     margin-top: ${(props) => props.marginTop || "0px"};
 `;
@@ -44,7 +45,7 @@ export const CardContainer = styled.View<CardContainerProps>`
     gap: 12px;
     width: ${(props) => props.width || "100%"};
     height: ${(props) => props.height || "100%"};
-    background-color: ${(props) => props.backgroundColor || "#fff"};
+    background-color: ${(props) => props.backgroundColor || "#F3F7FF"};
     margin-top: ${(props) => props.marginTop || "0px"};
     border-radius: ${(props) => props.borderRadius || "10px"};
     padding: ${(props) => props.padding || "16px"};

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
 import { IAllBugs } from 'types';
@@ -20,6 +20,7 @@ import AllBug from '../components/allBug';
 import { SafeArea } from '@src/components/main.style';
 import NavigateBack from '../components/navigate-back';
 import { theme } from '@src/theme';
+
 
 const FeedScreen = () => {
     const navigation = useNavigation<AllBugsNavigationType>();
@@ -70,7 +71,7 @@ const FeedScreen = () => {
     };
 
     return (
-        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary}>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
 
             <View style={styles.container}>
 
@@ -79,13 +80,16 @@ const FeedScreen = () => {
                     <NavigateBack />
                     <Text style={[styles.title, { flex: 1 }]}>Hata Akış</Text>
                     <Pressable style={styles.button} onPress={goToFavoriBugsScreen}>
-                        <Text style={styles.buttonText}>Favoriler</Text>
+
+                        <MaterialCommunityIcons name="table-heart" size={36} color="#F5daF5" />
                     </Pressable>
                 </View>
 
                 {/* Arama bölümü */}
                 <View style={styles.searchBarContainer}>
                     <FontAwesome5 name="search" size={20} color="gray" />
+
+
                     <TextInput
                         style={styles.searchInput}
                         placeholder="Ara..."
@@ -118,7 +122,7 @@ export default FeedScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: theme.colors.ui.secondary, // Örnek amaçlı zinc400 rengini Hex olarak tanımladık
+        backgroundColor: "#F5F5FF", // Örnek amaçlı zinc400 rengini Hex olarak tanımladık
     },
     headerContainer: {
         flexDirection: 'row',
@@ -134,16 +138,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#ef4444',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 8,
+        backgroundColor: '#FFFFFF', // Butonun arka planını belirginleştir
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderRadius: 40,
         alignItems: 'center',
         justifyContent: 'center',
         alignSelf: 'center',
-        width: 100,
-        height: 40,
-    },
+        width: 56,
+        height: 56,
+
+        // iOS için gölge efekti
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+
+        // Android için yükseltilmiş efekt
+        elevation: 6,
+    }
+    ,
     buttonText: {
         color: '#FFFFFF',
         fontSize: 14,
@@ -151,7 +165,7 @@ const styles = StyleSheet.create({
     },
     searchBarContainer: {
         flexDirection: 'row',
-        backgroundColor: theme.colors.ui.secondary,
+        backgroundColor: theme.colors.ui.tertiary2,
         paddingHorizontal: 16,
         alignItems: 'center',
         marginBottom: 16,
@@ -171,6 +185,7 @@ const styles = StyleSheet.create({
         marginLeft: 24,
         marginRight: 24,
         marginBottom: 16,
+
     },
     centered: {
         flex: 1,

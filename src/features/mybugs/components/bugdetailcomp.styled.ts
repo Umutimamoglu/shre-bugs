@@ -1,9 +1,9 @@
 import styled from "styled-components/native";
-import { Dimensions } from "react-native";
+import { Dimensions, TouchableOpacity } from "react-native";
 
 export const Container = styled.View`
   flex: 1;
-  background-color: #f4f4f4;
+   background-color: #F5F5FF;
   padding: 16px;
   align-items: center;
 `;
@@ -38,7 +38,7 @@ export const InputField = styled.TextInput`
 `;
 
 interface ToggleButtonProps {
-    isFixed: boolean;
+  isFixed: boolean;
 }
 
 export const ToggleButton = styled.TouchableOpacity<ToggleButtonProps>`
@@ -54,12 +54,7 @@ export const ToggleButtonText = styled.Text`
   text-align: center;
 `;
 
-export const UpdateButton = styled.TouchableOpacity`
-  background-color: #007bff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  margin-top: 20px;
-`;
+
 
 export const UpdateButtonText = styled.Text`
   color: white;

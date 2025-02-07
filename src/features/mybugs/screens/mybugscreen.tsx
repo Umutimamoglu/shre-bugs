@@ -23,6 +23,7 @@ import {
     ItemSeparator,
     TopContainer,
     BottomContainer,
+    MiniContainer,
 } from '@src/features/mybugs/components/mybug.styled'; // Önceden tanımlı styled-components dosyasından geliyor
 import { theme } from '@src/theme';
 import { SafeArea } from '@src/components/main.style';
@@ -35,12 +36,11 @@ const MyBugsScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation<BugsNavigationType>();
 
-    // Filtreleme işlemi
     const filteredData = bugs?.filter((bug) => {
         const matchesSearchQuery =
             bug.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
             bug.language.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesIsChecked = !isChecked || bug.isFixed; // Checkbox durumu
+        const matchesIsChecked = !isChecked || bug.isFixed;
         return matchesSearchQuery && matchesIsChecked;
     });
 
@@ -51,7 +51,7 @@ const MyBugsScreen = () => {
     );
 
     return (
-        <SafeArea edges={[]} color={theme.colors.ui.secondary}>
+        <SafeArea edges={[]} color={theme.colors.ui.tertiary2}>
 
             <Container>
                 {/* Filtre ve Checkbox */}
@@ -88,17 +88,18 @@ const MyBugsScreen = () => {
                 </TopContainer>
                 {/* Liste */}
                 <BottomContainer>
-
-
-                    <FlatList
-                        data={filteredData}
-                        keyExtractor={(item) => item._id}
-                        renderItem={renderItem}
-                        ItemSeparatorComponent={() => <ItemSeparator />}
-                        contentContainerStyle={{ paddingBottom: 16 }}
-                        showsVerticalScrollIndicator={false}
-                    />
+                    <MiniContainer>
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item) => item._id}
+                            renderItem={renderItem}
+                            ItemSeparatorComponent={() => <ItemSeparator />}
+                            contentContainerStyle={{ paddingBottom: 16 }}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    </MiniContainer>
                 </BottomContainer>
+
             </Container>
         </SafeArea>
     );

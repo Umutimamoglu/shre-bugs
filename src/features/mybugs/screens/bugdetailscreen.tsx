@@ -3,21 +3,19 @@ import { useRoute, RouteProp } from "@react-navigation/native";
 import { BugsStackParamList } from "@src/infrastracture/navigation/types";
 import { SafeArea } from "@src/components/main.style";
 import { theme } from "@src/theme";
+import { useBug } from "@src/services/bugs/bugs.context";
 
-
-import { axiosInstance } from "@src/services/account/account.service";
 import {
     Container,
     Title,
-    ImageContainer,
-    StyledImage,
     InputField,
     ToggleButton,
-    ToggleButtonText,
-    UpdateButton,
-    UpdateButtonText
+
+    UpdateButtonText,
+    ToggleButtonText
 } from "../components/bugdetailcomp.styled";
-import { useBug } from "@src/services/bugs/bugs.context";
+import UpdateButton from "@src/features/mybugs/components/buttonscomponent";
+
 
 type BugDetailRouteProp = RouteProp<BugsStackParamList, "BugDetail">;
 
@@ -39,20 +37,23 @@ const BugDetailScreen = () => {
     };
 
     return (
-        <SafeArea edges={["top"]} color={theme.colors.brand.secondary}>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
             <Container>
                 <Title>Hata Detayları</Title>
 
                 <InputField value={name} onChangeText={setName} placeholder="Hata Adı" />
                 <InputField value={howDidIFix} onChangeText={setHowDidIFix} multiline placeholder="Nasıl çözüldü?" />
 
+                {/* Tik (✔️) ve Çarpı (❌) İşareti Kullanıldı */}
                 <ToggleButton onPress={() => setIsFixed(!isFixed)} isFixed={isFixed}>
-                    <ToggleButtonText>{isFixed ? "Evet" : "Hayır"}</ToggleButtonText>
+                    <ToggleButtonText>
+                        {isFixed ? "Fixed ✔️" : " Waiting ❌"}
+                    </ToggleButtonText>
                 </ToggleButton>
-
                 <UpdateButton onPress={handleUpdate}>
                     <UpdateButtonText>Güncelle</UpdateButtonText>
                 </UpdateButton>
+
             </Container>
         </SafeArea>
     );
