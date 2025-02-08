@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { CreateBugPayload, createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest } from "./bugs.service";
-import { IBug, IAllBugs } from "types";
+import { createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest } from "./bugs.service";
+import { IBug, IAllBugs, CreateBugPayload } from "types";
 
 interface BugContextProps {
     bugs: IBug[] | null;
@@ -97,6 +97,8 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setIsLoading(false);
         }
     };
+
+
 
     const deleteBug = async (bugId: string) => {
         setIsLoading(true);

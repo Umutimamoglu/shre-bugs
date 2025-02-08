@@ -27,7 +27,6 @@ const FeedScreen = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedBug, setSelectedBug] = useState<IAllBugs | null>(null);
 
-    // Context üzerinden çekilen veriler
     const { allBugs, isLoading, error, refreshAllBugs } = useBug();
 
     // Bileşen yüklendiğinde veya yeniden odaklandığında verileri yenile

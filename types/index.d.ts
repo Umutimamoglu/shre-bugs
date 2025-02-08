@@ -39,15 +39,7 @@ export interface ILogin {
     password: string;
 }
 
-export interface CreateBugPayload {
-    name: string;
-    isFixed: boolean;
-    language: string;
-    image?: string;
-    color?: IColor;
-    type: string; // 'type' artık zorunlu
-    howDidIFix: string;
-}
+
 
 export interface ICreateErrorRequest {
 
@@ -85,6 +77,25 @@ export interface IAllBugs {
     howDidIFix?: string;
     Date: Date;
     Time: Time;
+}
+
+export interface CreateBugPayload {
+    //don't change this. The species that come and go are not the same
+    name: string;
+    color: {
+        id: string;
+        name: string;
+        code: string;
+    };
+    isFixed: boolean;
+    language: string;
+    type: string;
+    howDidIFix: string;
+    image?: {
+        uri: string;
+        name: string;
+        type: string;
+    };
 }
 
 interface Message {
