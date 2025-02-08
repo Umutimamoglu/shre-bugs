@@ -1,7 +1,7 @@
 import { CreateBugPayload, IAllBugs, IBug } from "types";
 import { axiosInstance } from "../account/account.service";
 import { BASE_URL } from "../connections";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 
 
@@ -22,12 +22,11 @@ export const createBugRequest = async (payload: CreateBugPayload) => {
             uri: payload.image.uri,
             type: payload.image.type,
             name: payload.image.name,
-        } as unknown as Blob); // React Native ile uyumluluk için
+        } as unknown as Blob);
     }
 
-    logFormData(formData); // FormData içeriğini logla
-
-    try {
+    logFormData(formData);
+    try { // burada base url bilerek yazdım fark etmedigini bilmek içlin
         const response = await axiosInstance.post(`${BASE_URL}/api/bugs/create`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -117,26 +116,26 @@ export const updateBugRequest = async (bugId: string, updatedFields: Partial<IBu
     }
 };
 
+
 export const addfavorirequest = async (updatedFields: IBug): Promise<IBug> => {
     try {
-        const response = await axiosInstance.post(`${BASE_URL}/api/bugs/addToFavorites/`, updatedFields);
+        const response = await axiosInstance.post('/api/bugs/addToFavorites/', updatedFields);
+        console.log('Sunucudan gelen yanıt:', response.data); // Sunucudan gelen yanıtı loglayın
         return response.data;
     } catch (error) {
-        if (error instanceof AxiosError) {
-            console.error("Axios error while updating bug:", {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
+        if (axios.isAxiosError(error)) {
+            console.error('Axios hatası:', {
+                mesaj: error.message,
+                yanıtVerisi: error.response?.data,
+                durum: error.response?.status,
             });
-            throw new Error(`Error updating bug: ${error.response?.data?.message || "Unknown error occurred"}`);
+            throw new Error(`Hata güncellenirken bir sorun oluştu: ${error.response?.data?.message || 'Bilinmeyen bir hata oluştu'}`);
         } else {
-            console.error("Unexpected error:", error);
-            throw new Error("An unexpected error occurred while updating bug.");
+            console.error('Beklenmeyen hata:', error);
+            throw new Error('Hata güncellenirken beklenmeyen bir sorun oluştu.');
         }
     }
 };
-
-
 
 const logFormData = (formData: FormData) => {
     const entries: any[] = [];

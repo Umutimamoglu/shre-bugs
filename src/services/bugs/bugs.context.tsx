@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest } from "./bugs.service";
+import { createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest, addfavorirequest } from "./bugs.service";
 import { IBug, IAllBugs, CreateBugPayload } from "types";
 
 interface BugContextProps {
@@ -10,6 +10,7 @@ interface BugContextProps {
     refreshBugs: () => Promise<void>;
     refreshAllBugs: () => Promise<void>;
     updateBug: (bugId: string, updatedFields: Partial<IBug>) => Promise<void>;
+    addFavroites: (updatedFields: IBug) => Promise<void>;
     createBug: (payload: CreateBugPayload) => Promise<void>;
     deleteBug: (bugId: string) => Promise<void>;
 }
@@ -98,6 +99,20 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     };
 
+    const addFavroites = async (updatedFields: IBug) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            await addfavorirequest(updatedFields);
+
+            console.log("Bug added to favroites successfully");
+        } catch (error) {
+            console.error("Error while addfavrites bug:", error);
+            setError("Failed to favoritesAdd bug");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
 
     const deleteBug = async (bugId: string) => {
@@ -134,6 +149,7 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 refreshAllBugs,
                 createBug,
                 updateBug,
+                addFavroites,
                 deleteBug,
             }}
         >
