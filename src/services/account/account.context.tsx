@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RegisterUserTypes, LoginUserTypes, IAuthenticatedUser } from "types";
-import { registerUser, loginUser, deleteToken, axiosInstance } from "./account.service";
+import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService } from "./account.service";
 
 interface AccountContextType {
     isLoading: boolean;
@@ -19,6 +19,7 @@ interface AccountContextType {
     ) => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    updateProfile: (profileData: IAuthenticatedUser) => Promise<void>;
 }
 
 export const AccountContext = createContext<AccountContextType>(
@@ -135,6 +136,30 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateProfile = async (profileData: IAuthenticatedUser) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const updatedUser = await updateProfileService(profileData);
+
+            // Service'den dönen güncellenmiş user verisini context'te sakla
+            setUser(updatedUser);
+
+            // AysncStorage'a da kaydetmek isterseniz:
+            await AsyncStorage.setItem("@user", JSON.stringify(updatedUser));
+
+            setIsLoggedIn(true);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
     return (
         <AccountContext.Provider
             value={{
@@ -142,11 +167,13 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 error,
                 user,
                 isLoggedIn,
+
                 setError,
                 setUser,
                 register,
                 login,
                 logout,
+                updateProfile,
             }}
         >
             {children}

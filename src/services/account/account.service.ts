@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import * as SecureStore from "expo-secure-store";
 import { BASE_URL } from "../connections";
 const TIME_OUT = 100000;
-import { LoginUserTypes, RegisterUserTypes } from "../../../types";
+import { IAuthenticatedUser, LoginUserTypes, RegisterUserTypes } from "../../../types";
 
 export const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -81,6 +81,36 @@ export const loginUser = async ({ email, password }: LoginUserTypes) => {
     }
 };
 
+
+export const updateProfileService = async (profileData: IAuthenticatedUser): Promise<IAuthenticatedUser> => {
+    try {
+        // formData veya JSON olarak göndermek tamamen backend gereksinimlerinize bağlı.
+        const formData = new FormData();
+
+        if (profileData.name) formData.append("name", profileData.name);
+        if (profileData.email) formData.append("email", profileData.email);
+        if (profileData.positionTitle) formData.append("positionTitle", profileData.positionTitle);
+        if (profileData.image) {
+            formData.append("image", {
+                uri: profileData.image,
+                name: "profile.jpg",
+                type: "image/jpeg",
+            } as any);
+        }
+
+        // /api/bugs/update örnek endpoint; kendi backend rotanıza göre güncelleyin
+        const response = await axiosInstance.put("/api/bugs/update", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        return response.data; // Örn: { _id, name, email, image, positionTitle, ... }
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            throw new Error(error.response?.data?.message || "Update failed");
+        }
+        throw error;
+    }
+};
 
 // Axios Interceptor
 axiosInstance.interceptors.request.use(async (req) => {

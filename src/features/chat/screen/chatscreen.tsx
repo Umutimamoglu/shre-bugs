@@ -1,15 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, TextInput, TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import {
+    FlatList,
+    TextInput,
+    TouchableOpacity,
+    View,
+    Text,
+    StyleSheet,
+    Image,
+} from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { AllBugsStackParamList } from "@src/infrastracture/navigation/types";
 import { AccountContext } from "@src/services/account/account.context";
 import { useChat } from "@src/services/chat/chat.context";
-import { SafeAreaView } from "react-native-safe-area-context";
-import MessageItem from "../components/messageItem";
 import { SafeArea } from "@src/components/main.style";
 import { theme } from "@src/theme";
+import { BASE_URL } from "@src/services/connections";
+import MessageItem from "../components/messageItem";
+import axios from "axios";
 
 type ChatScreenRouteProp = RouteProp<AllBugsStackParamList, "ChatScreen">;
+
 const ChatScreen = () => {
     const route = useRoute<ChatScreenRouteProp>();
     const { bug } = route.params;
@@ -17,8 +27,13 @@ const ChatScreen = () => {
 
     const { chatId, messages, isLoading, findOrCreateChat, fetchMessages, sendMessage } = useChat();
     const [newMessage, setNewMessage] = useState<string>("");
+    const [bugUser, setBugUser] = useState<any>(null); // Kullanıcı bilgilerini saklamak için state
 
     useEffect(() => {
+        console.log("🔹 ChatScreen Açıldı!");
+        console.log("🟡 Bug Bilgileri:", bug);
+        console.log("🟢 Kullanıcı Bilgileri:", user);
+
         if (!user || !bug) return;
 
         const initChat = async () => {
@@ -35,6 +50,25 @@ const ChatScreen = () => {
         initChat();
     }, [user, bug]);
 
+    // Backend'den kullanıcının tüm bilgilerini getir
+    const fetchUserDetails = async () => {
+        if (!bug?.user?._id) return;
+
+        try {
+            const response = await axios.get(`${BASE_URL}/users/getUser/${bug.user._id}`);
+            if (response.status === 200) {
+                setBugUser(response.data);
+                console.log("✅ Kullanıcı bilgileri başarıyla alındı:", response.data);
+            }
+        } catch (error) {
+            console.error("❌ Kullanıcı bilgisi alınırken hata oluştu:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserDetails();
+    }, [bug]);
+
     const handleSendMessage = async () => {
         if (newMessage.trim() && user && chatId) {
             await sendMessage(chatId, user._id, newMessage);
@@ -49,8 +83,16 @@ const ChatScreen = () => {
                 <TouchableOpacity onPress={() => console.log("Geri Git")}>
                     <Text style={styles.backButton}>{"<"}</Text>
                 </TouchableOpacity>
-                {/* Kullanıcı adı boşsa "Unknown User" göster */}
-                <Text style={styles.headerTitle}>{bug.user?.name || "Unknown User"}</Text>
+
+                {/* Kullanıcı Resmi */}
+                {bugUser?.image ? (
+                    <Image source={{ uri: `${BASE_URL}/${bugUser.image}` }} style={styles.profileImage} />
+                ) : (
+                    <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.profileImage} />
+                )}
+
+                {/* Kullanıcı Adı */}
+                <Text style={styles.headerTitle}>{bugUser?.name || "Unknown User"}</Text>
             </View>
 
             <View style={styles.separator} />
@@ -80,63 +122,61 @@ const ChatScreen = () => {
     );
 };
 
+export default ChatScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F5F5F5',
-    },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#E0E0E0',
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#E0E0E0",
         padding: 10,
     },
     backButton: {
         fontSize: 24,
-        color: '#333',
+        color: "#333",
     },
     headerTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: '#444',
+        fontWeight: "bold",
+        color: "#444",
+        marginLeft: 10,
     },
     separator: {
         height: 1,
-        backgroundColor: '#CCC',
-        width: '100%',
+        backgroundColor: "#CCC",
+        width: "100%",
     },
-    messageList: {
-        flex: 1,
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginLeft: 10,
     },
     inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         padding: 10,
         borderTopWidth: 1,
-        borderColor: '#CCC',
-        backgroundColor: '#FFF',
+        borderColor: "#CCC",
+        backgroundColor: "#FFF",
     },
     input: {
         flex: 1,
         borderWidth: 1,
-        borderColor: '#CCC',
+        borderColor: "#CCC",
         borderRadius: 20,
         padding: 10,
-        backgroundColor: 'white',
+        backgroundColor: "white",
     },
     sendButton: {
         marginLeft: 10,
-        backgroundColor: '#E57373',
+        backgroundColor: "#E57373",
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 20,
     },
     sendButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: "white",
+        fontWeight: "bold",
     },
 });
-
-export default ChatScreen;

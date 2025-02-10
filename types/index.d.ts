@@ -67,7 +67,7 @@ export interface IBug {
 export interface IAllBugs {
     createdAt: string | number | Date
     _id: string
-    user: IUserGetAllErrors;
+    user: IAuthenticatedUser;
     name: string;
     isFixed: boolean;
     language: string;
