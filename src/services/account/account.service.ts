@@ -57,35 +57,30 @@ export const registerUser = async ({ email, name, password, image, positionTitle
         }
     }
 };
-
-// Login User
 export const loginUser = async ({ email, password }: LoginUserTypes) => {
-    console.log("Login data:", { email, password });
+
+
     try {
         const response = await axiosInstance.post("/users/login", {
             email,
             password,
         });
+
+        console.log("✅ Login başarılı, dönen veri:", response.data);
+
         const _token = response.data.token;
-        await saveToken('blossom_user_token', _token);
+        await saveToken("blossom_user_token", _token);
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${_token}`;
-        console.log("Login successful, token received:", _token);
-        return response.data.user;
+
+        console.log("🔐 Token kaydedildi:", _token);
+
+        return response.data;
     } catch (error) {
-        if (error instanceof AxiosError) {
-            console.error("Axios error during login:", {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-                headers: error.response?.headers
-            });
-            throw new Error(`Login failed: ${error.response?.data?.message || "Unknown error occurred"}`);
-        } else {
-            console.error("Unexpected error:", error);
-            throw new Error("An unexpected error occurred during login.");
-        }
+        console.error("❌ Login işlemi sırasında hata oluştu:", error);
+        throw new Error("Login failed.");
     }
 };
+
 
 // Axios Interceptor
 axiosInstance.interceptors.request.use(async (req) => {

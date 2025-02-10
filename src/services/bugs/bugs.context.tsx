@@ -1,14 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest, addfavorirequest } from "./bugs.service";
+import { createBugRequest, deleteBugRequest, getMyBugsRequest, getAllBugsRequest, updateBugRequest, addfavorirequest, getAllFavroites } from "./bugs.service";
 import { IBug, IAllBugs, CreateBugPayload } from "types";
 
 interface BugContextProps {
     bugs: IBug[] | null;
     allBugs: IAllBugs[] | null;
+    allFavorites: IAllBugs[] | null;
     isLoading: boolean;
     error: string | null;
     refreshBugs: () => Promise<void>;
     refreshAllBugs: () => Promise<void>;
+    refreshAllFavorites: () => Promise<void>;
     updateBug: (bugId: string, updatedFields: Partial<IBug>) => Promise<void>;
     addFavroites: (updatedFields: IBug) => Promise<void>;
     createBug: (payload: CreateBugPayload) => Promise<void>;
@@ -20,6 +22,7 @@ const BugContext = createContext<BugContextProps | undefined>(undefined);
 export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [bugs, setBugs] = useState<IBug[] | null>(null);
     const [allBugs, setAllBugs] = useState<IAllBugs[] | null>(null);
+    const [allFavorites, setallFavorites] = useState<IAllBugs[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -57,12 +60,31 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     };
 
+    const fetchAllFavorites = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const bugs = await getAllFavroites();
+            setallFavorites(bugs);
+        } catch (err) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Unknown error occurred");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
     const refreshBugs = async () => {
         await fetchBugs();
     };
 
     const refreshAllBugs = async () => {
         await fetchAllBugs();
+    };
+    const refreshAllFavorites = async () => {
+        await fetchAllFavorites();
     };
 
     const createBug = async (payload: CreateBugPayload) => {
@@ -143,6 +165,7 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             value={{
                 bugs,
                 allBugs,
+                allFavorites,
                 isLoading,
                 error,
                 refreshBugs,
@@ -150,6 +173,7 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 createBug,
                 updateBug,
                 addFavroites,
+                refreshAllFavorites,
                 deleteBug,
             }}
         >

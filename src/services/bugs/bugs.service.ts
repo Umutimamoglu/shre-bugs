@@ -137,6 +137,26 @@ export const addfavorirequest = async (updatedFields: IBug): Promise<IBug> => {
     }
 };
 
+export const getAllFavroites = async (): Promise<IAllBugs[]> => {
+    try {
+        const response = await axiosInstance.get('/api/bugs/getAllFavori/');
+        console.log('Sunucudan gelen yanıt:', response.data);
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Axios hatası:', {
+                mesaj: error.message,
+                yanıtVerisi: error.response?.data,
+                durum: error.response?.status,
+            });
+            throw new Error(`Hata güncellenirken bir sorun oluştu: ${error.response?.data?.message || 'Bilinmeyen bir hata oluştu'}`);
+        } else {
+            console.error('Beklenmeyen hata:', error);
+            throw new Error('Hata güncellenirken beklenmeyen bir sorun oluştu.');
+        }
+    }
+};
+
 const logFormData = (formData: FormData) => {
     const entries: any[] = [];
     formData.forEach((value, key) => {

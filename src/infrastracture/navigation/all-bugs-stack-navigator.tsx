@@ -5,8 +5,8 @@ import React from "react";
 import FeedScreen from "@src/features/allbugfeed/screens/feedscreen";
 import AllBugDetail from "@src/features/allbugfeed/screens/allbugdetail";
 import ChatScreen from "@src/features/chat/screen/chatscreen";
-import FavoriBugsScreen from "@src/features/favoribugs/favoribugs";
-import FavoriBugDettailScreen from "@src/features/favoribugs/favoribugdetail";
+import FavoriBugsScreen from "@src/features/favoribugs/screens/favoribugs";
+import FavoriBugDettailScreen from "@src/features/favoribugs/screens/favoribugdetail";
 
 
 const Stack = createNativeStackNavigator<AllBugsStackParamList>();

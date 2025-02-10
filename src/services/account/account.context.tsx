@@ -1,15 +1,15 @@
 import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
-import { RegisterUserTypes, LoginUserTypes } from "types";
+import { RegisterUserTypes, LoginUserTypes, IAuthenticatedUser } from "types";
 import { registerUser, loginUser, deleteToken, axiosInstance } from "./account.service";
 
 interface AccountContextType {
     isLoading: boolean;
     error: string | null;
-    user: RegisterUserTypes | null;
+    user: IAuthenticatedUser | null;
+    isLoggedIn: boolean;
     setError: React.Dispatch<React.SetStateAction<string | null>>;
-    setUser: React.Dispatch<React.SetStateAction<RegisterUserTypes | null>>;
+    setUser: React.Dispatch<React.SetStateAction<IAuthenticatedUser | null>>;
     register: (
         email: string,
         password: string,
@@ -28,15 +28,18 @@ export const AccountContext = createContext<AccountContextType>(
 export const AccountProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [user, setUser] = useState<RegisterUserTypes | null>(null);
+    const [user, setUser] = useState<IAuthenticatedUser | null>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Kullanıcının giriş yapıp yapmadığını takip eden state
 
     useEffect(() => {
         const loadUserFromStorage = async () => {
             try {
                 const storedUser = await AsyncStorage.getItem("@user");
                 if (storedUser) {
-                    setUser(JSON.parse(storedUser));
-                    console.log("User restored from storage:", JSON.parse(storedUser));
+                    const parsedUser: IAuthenticatedUser = JSON.parse(storedUser);
+                    setUser(parsedUser);
+                    setIsLoggedIn(true);
+                    console.log("User restored from storage:", parsedUser);
                 }
             } catch (err) {
                 console.error("Error loading user from AsyncStorage:", err);
@@ -66,8 +69,18 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 image,
                 positionTitle,
             });
-            setUser(registeredUser);
-            await AsyncStorage.setItem("@user", JSON.stringify(registeredUser));
+
+            const authenticatedUser: IAuthenticatedUser = {
+                _id: registeredUser._id,
+                email: registeredUser.email,
+                name: registeredUser.name,
+                image: registeredUser.image || null,
+                positionTitle: registeredUser.positionTitle,
+            };
+
+            setUser(authenticatedUser);
+            setIsLoggedIn(true);
+            await AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser));
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -82,9 +95,20 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         setError(null);
 
         try {
-            const loggedInUser = await loginUser({ email, password });
-            await AsyncStorage.setItem("@user", JSON.stringify(loggedInUser));
-            setUser(loggedInUser);
+            const response = await loginUser({ email, password });
+
+            const authenticatedUser: IAuthenticatedUser = {
+                _id: response.user._id,
+                email: response.user.email,
+                name: response.user.name,
+                image: response.user.image || null,
+                positionTitle: response.user.positionTitle,
+            };
+
+            await AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser));
+            setUser(authenticatedUser);
+            setIsLoggedIn(true);
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${response.token}`;
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -103,6 +127,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             await deleteToken("blossom_user_token");
             delete axiosInstance.defaults.headers.common["Authorization"];
             setUser(null);
+            setIsLoggedIn(false);
         } catch (err) {
             setError("Logout failed. Please try again.");
         } finally {
@@ -115,8 +140,9 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 isLoading,
                 error,
-                setError,
                 user,
+                isLoggedIn,
+                setError,
                 setUser,
                 register,
                 login,

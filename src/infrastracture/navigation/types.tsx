@@ -43,6 +43,7 @@ export type AllBugsStackParamList = {
     AllBugDetail: { bug: IAllBugs };
     ChatScreen: { bug: IAllBugs };
     FavoriBugs: undefined
+
     FavoriBugDettail: { bug: IAllBugs }
 };
 
