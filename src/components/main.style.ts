@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { SafeAreaView, SafeAreaViewProps } from "react-native-safe-area-context";
-import { Keyboard, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -96,6 +96,5 @@ export const StyledButton = styled(TouchableOpacity) <{ isHovered?: boolean }>`
   align-items: center;
   justify-content: center;
 `;
-
 
 
