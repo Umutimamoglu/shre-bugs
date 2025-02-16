@@ -1,0 +1,23 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@src/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "assets",
+    "declarations.d.ts"
+  ]
+}
