@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Text } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Pressable, Text, Touchable, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { BASE_URL } from "@src/services/connections";
 import { CreateBugPayload, IColor } from "types";
 import { launchImageLibrary, ImageLibraryOptions } from "react-native-image-picker";
@@ -17,9 +17,11 @@ import {
     ColorPickerContainer,
     ColorsContainer,
     DropdownContainer,
+    HeaderContainerHome,
     HomeMainContainer,
     ImagePickerButton,
     ImagePickerContainer,
+    LabelText,
     StyledDropDownPicker,
     StyledPressableButton,
     TextInputStyled,
@@ -27,11 +29,16 @@ import {
 } from "../components/home.styled";
 import { theme } from "@src/theme";
 import { useBug } from "@src/services/bugs/bugs.context";
+import { ActionButton, BackButton, HeaderContainer, HeaderTitle } from "@src/features/allbugfeed/components/feed.Styled";
+
+import { useNavigation } from '@react-navigation/native';
+import { AllBugsNavigationType } from "@src/infrastracture/navigation/types";
 
 const COLORS = getColors();
 
 function HomeScreen() {
     const { createBug } = useBug(); // Bug context kullanımı
+    const navigation = useNavigation<AllBugsNavigationType>();
 
     const [languageOpen, setLanguageOpen] = useState(false);
     const [languageValue, setLanguageValue] = useState<string | null>(null);
@@ -111,11 +118,31 @@ function HomeScreen() {
         }
     }, [bugTypeValue]);
 
+    const goToİnfo = () => {
+        navigation.navigate("FavoriBugs");
+    };
+
+
+
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
             <HomeMainContainer>
+
+                <HeaderContainerHome>
+                    <BackButton onPress={() => navigation.goBack()}>
+                        <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
+                    </BackButton>
+                    <HeaderTitle>Hata Ekle</HeaderTitle>
+                    <TouchableOpacity onPress={goToİnfo}>
+                        <MaterialCommunityIcons name="information" size={36} color="black" />
+
+                    </TouchableOpacity>
+                </HeaderContainerHome>
+
                 <CardContainer>
-                    <TitleText>Bug Ekle!</TitleText>
+                    <LabelText>Galeriye git veya kameranı kullan
+                        !
+                    </LabelText>
                     <ImagePickerContainer>
                         <ImagePickerButton onPress={selectImageFromLibrary}>
                             <MaterialIcons name="photo-library" size={24} color="#A5616C" />

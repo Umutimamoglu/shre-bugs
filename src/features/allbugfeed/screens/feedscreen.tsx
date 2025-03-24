@@ -74,6 +74,8 @@ const FeedScreen = () => {
         navigation.navigate("FavoriBugs");
     };
 
+
+
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
             <Container>

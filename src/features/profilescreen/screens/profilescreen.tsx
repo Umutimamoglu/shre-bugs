@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { SafeArea } from '@src/components/main.style';
 import { AccountContext } from '@src/services/account/account.context';
 import { BASE_URL } from '@src/services/connections';
+import { theme } from '@src/theme';
 
 const ProfileScreen = () => {
     const { width, height } = Dimensions.get('window');
@@ -112,7 +113,7 @@ const ProfileScreen = () => {
     };
 
     return (
-        <SafeArea>
+        <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
             <View style={styles.container}>
                 {user ? (
                     <View style={styles.centered}>

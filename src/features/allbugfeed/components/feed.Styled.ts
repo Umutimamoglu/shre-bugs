@@ -17,7 +17,7 @@ export const HeaderContainer = styled.View`
 `;
 
 export const BackButton = styled(Pressable)`
-  padding: 8px;
+  padding: 2px;
 `;
 
 export const HeaderTitle = styled.Text`

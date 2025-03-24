@@ -118,3 +118,14 @@ export const ItemSeparator = styled.View`
   height: 14px;
 `;
 
+
+
+export const HeaderContainerMyBugs = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+
+  padding-horizontal: 10px;
+`;
+

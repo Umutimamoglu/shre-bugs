@@ -16,7 +16,7 @@ interface HomeMainContainerProps {
 
 export const HomeMainContainer = styled.View<HomeMainContainerProps>`
     flex: 1;
-    padding: ${(props) => props.padding || "16px"};
+    padding-horizontal: ${(props) => props.padding || "16px"};
     background-color: ${(props) =>
     props.color || theme.colors.ui.tertiary3};
     align-items: ${(props) => props.alignItems || "center"};
@@ -40,11 +40,10 @@ interface CardContainerProps {
 }
 
 export const CardContainer = styled.View<CardContainerProps>`
- align-items: center;
+    align-items: center;
     justify-content: center;
     gap: 12px;
     width: ${(props) => props.width || "100%"};
-    height: ${(props) => props.height || "100%"};
     background-color: ${(props) => props.backgroundColor || "#F3F7FF"};
     margin-top: ${(props) => props.marginTop || "0px"};
     border-radius: ${(props) => props.borderRadius || "10px"};
@@ -55,6 +54,16 @@ export const CardContainer = styled.View<CardContainerProps>`
     shadow-opacity: ${(props) => props.shadowOpacity || 0.2};
     shadow-radius: ${(props) => props.shadowRadius || 4}px;
     elevation: ${(props) => props.elevation || 5};
+`;
+
+
+export const HeaderContainerHome = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 16px;
+  padding-horizontal: 0px;
 `;
 
 export const TitleText = styled.Text`
