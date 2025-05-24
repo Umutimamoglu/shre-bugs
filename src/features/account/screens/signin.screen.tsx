@@ -9,34 +9,45 @@ import { Header } from '../components/header.component';
 import { Title } from '../components/title.component';
 import { AccountContext } from '@src/services/account/account.context';
 import { BottomContainer, ButtonText, CustomButton, InputsContainer } from '@src/features/account/components/acoount.styled';
+import { z } from 'zod';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const signInSchema = z.object({
+    email: z.string().email('Geçersiz e-posta'),
+    password: z.string().min(6, 'En az 6 karakter').max(18, 'En fazla 18 karakter')
+});
+
+type SignInFormData = z.infer<typeof signInSchema>;
 
 const SignInScreen = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
     const [keyboardActive, setKeyboardActive] = useState(false);
-
     const navigation = useNavigation<AuthScreenNavigationType<'SignIn'>>();
     const { login } = useContext(AccountContext);
 
-    const navBack = () => {
-        navigation.goBack();
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<SignInFormData>({
+        resolver: zodResolver(signInSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
+
+    const onSubmit = async (data: SignInFormData) => {
+        try {
+            await login(data.email, data.password);
+        } catch (err) {
+            console.error('Giriş hatası:', err);
+            Alert.alert('Hata', 'Giriş işlemi sırasında bir hata oluştu.');
+        }
     };
 
-    const handleSignIn = () => {
-        if (!email.includes('@') || !email.includes('.')) {
-            Alert.alert('Uyarı', 'E-posta adresi geçersiz.', [{ text: 'Tamam' }]);
-            return;
-        }
-
-        if (password.length < 6 || password.length > 18) {
-            Alert.alert('Uyarı', 'Parola en az 6, en fazla 18 karakter olmalıdır.', [{ text: 'Tamam' }]);
-            return;
-        }
-
-        login(email, password).catch((err) => {
-            console.error('Kullanıcı kaydedilemedi:', err);
-            Alert.alert('Hata', 'Kullanıcı kayıt işlemi sırasında bir hata oluştu.');
-        });
+    const navBack = () => {
+        navigation.goBack();
     };
 
     useEffect(() => {
@@ -50,57 +61,83 @@ const SignInScreen = () => {
     }, []);
 
     return (
-        <SafeArea edges={['top']} color={theme.colors.brand.primary}>
-            <MainContainer color={theme.colors.brand.primary}>
+        <SafeArea edges={['top']} color={theme.colors.ui.tertiary3}>
+            <MainContainer color={theme.colors.ui.tertiary3}>
                 <KeyboardCloser isEnabled>
-                    {!keyboardActive && <Title />}
-                    <Header title="Giriş Yap" subtitle="Hatalarını kolayca çöz" />
+
                     <InputsContainer>
-                        <TextInput
-                            style={{
-                                width: 200,
-                                height: 40,
-                                backgroundColor: theme.colors.ui.secondary,
-                                borderRadius: 10,
-                                marginVertical: 5,
-                                paddingHorizontal: 10,
-                            }}
-                            onChangeText={setEmail}
-                            value={email}
-                            placeholder="E-posta adresinizi girin"
-                            keyboardType="email-address"
+                        {!keyboardActive && <Title />}
+                        <Header title="Giriş Yap" subtitle="Hatalarını kolayca çöz" />
+                        <Controller
+                            control={control}
+                            name="email"
+                            render={({ field: { onChange, value, onBlur } }) => (
+                                <TextInput
+                                    style={{
+                                        width: 300,
+                                        height: 44,
+                                        backgroundColor: '#FAFAFA',
+                                        borderRadius: 10,
+                                        marginVertical: 5,
+                                        paddingHorizontal: 10,
+                                        borderWidth: 2,
+                                        borderColor: '#ccc'
+                                    }}
+                                    placeholder="E-posta adresinizi girin"
+                                    placeholderTextColor="#888"
+                                    onChangeText={onChange}
+                                    onBlur={onBlur}
+                                    value={value}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                />
+                            )}
                         />
-                        <TextInput
-                            style={{
-                                width: 200,
-                                height: 40,
-                                backgroundColor: theme.colors.ui.secondary,
-                                borderRadius: 10,
-                                marginVertical: 5,
-                                paddingHorizontal: 10,
-                            }}
-                            onChangeText={setPassword}
-                            value={password}
-                            placeholder="Şifrenizi girin"
-                            secureTextEntry
+                        {errors.email && <Text style={{ color: 'red' }}>{errors.email.message}</Text>}
+
+                        <Controller
+                            control={control}
+                            name="password"
+                            render={({ field: { onChange, value, onBlur } }) => (
+                                <TextInput
+                                    style={{
+                                        width: 300,
+                                        height: 44,
+                                        backgroundColor: '#FAFAFA',
+                                        borderRadius: 10,
+                                        marginVertical: 5,
+                                        paddingHorizontal: 10,
+                                        borderWidth: 2,
+                                        borderColor: '#ccc'
+                                    }}
+                                    placeholder="Şifrenizi girin"
+                                    placeholderTextColor="#888"
+                                    onChangeText={onChange}
+                                    onBlur={onBlur}
+                                    value={value}
+                                    secureTextEntry
+                                />
+                            )}
                         />
-                    </InputsContainer>
-                    <BottomContainer>
+                        {errors.password && <Text style={{ color: 'red' }}>{errors.password.message}</Text>}
+
                         <Pressable onPress={navBack}>
-                            <Text style={{ textAlign: 'center', color: theme.colors.brand.secondary }}>
+                            <Text style={{ textAlign: 'center', color: '#007AFF' }}>
                                 Yeni bir hesap oluşturmak için
                             </Text>
                         </Pressable>
+
                         <CustomButton
-                            onPress={handleSignIn}
+                            height="50px"
+                            onPress={handleSubmit(onSubmit)}
                             style={{
-                                backgroundColor: theme.colors.brand.secondary,
+                                backgroundColor: '#007AFF',
                                 marginTop: 15,
                             }}
                         >
                             <ButtonText>Giriş Yap</ButtonText>
                         </CustomButton>
-                    </BottomContainer>
+                    </InputsContainer>
                 </KeyboardCloser>
             </MainContainer>
         </SafeArea>

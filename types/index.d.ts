@@ -115,3 +115,19 @@ type LoginUserTypes = {
     email: string;
     password: string;
 };
+export interface SignUpFormData {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    positionTitle: string;
+};
+export interface SignIbFormData {
+
+    email: string;
+    password: string;
+
+};
+
+
+

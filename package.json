@@ -14,6 +14,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-native-fontawesome": "^0.3.2",
+    "@hookform/resolvers": "^5.0.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -40,12 +41,14 @@
     "react-native-vector-icons": "^10.2.0",
     "styled-components": "^6.1.13",
     "swr": "^2.3.0",
-    "vector-icons": "^0.1.0"
+    "vector-icons": "^0.1.0",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.3.12",
     "@types/react-native": "^0.73.0",
+    "@types/styled-components-react-native": "^5.2.5",
     "typescript": "^5.3.3"
   },
   "private": true

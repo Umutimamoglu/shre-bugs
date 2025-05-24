@@ -236,7 +236,7 @@ export const ButtonContainer = styled.View`
   `;
 
 export const StyledPressableButton = styled.Pressable<StyledButtonProps>`
-    background-color: ${(props) => props.backgroundColor || "#C8848E"};
+    background-color: ${(props) => props.backgroundColor || "#A6D2E1"};
     width: ${(props) => props.width || "80%"};
     height: ${(props) => props.height || "50px"};
     border-radius: ${(props) => props.borderRadius || "20px"};

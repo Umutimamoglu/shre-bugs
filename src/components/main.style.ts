@@ -1,37 +1,16 @@
 import styled from "styled-components/native";
 import { SafeAreaView, SafeAreaViewProps } from "react-native-safe-area-context";
-import { Keyboard, Pressable, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  FontAwesome,
-} from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 import { theme } from "@src/theme";
 
-
-
-
+// ✳️ Prop arayüzleri
 interface SafeAreaProps extends SafeAreaViewProps {
   color?: string;
 }
 
-export const KeyboardCloserView = styled.View`
-  flex: 1;
-`;
-
-
-
-
-
-export const SafeArea = styled(SafeAreaView).attrs<SafeAreaProps>((props) => ({
-  edges: props.edges || ["right", "top", "left"],
-}))`
-  flex: 1;
-  background-color: ${(props) => props.color || theme.colors.bg.primary || "#f2f2f2"};
-`;
-
-interface CenteredContainerProps {
-  absolute?: boolean;
+interface MainContainerProps {
+  color?: string;
+  padding?: string;
 }
 
 interface RowContainerProps {
@@ -41,34 +20,52 @@ interface RowContainerProps {
   margin?: string;
 }
 
-interface MainContainerProps {
-  color?: string;
-  padding?: string;
+interface CenteredContainerProps {
+  absolute?: boolean;
 }
+
+interface StyledButtonProps {
+  isHovered?: boolean;
+}
+
+// ✳️ styled bileşenleri
+export const KeyboardCloserView = styled.View`
+  flex: 1;
+`;
+
+export const SafeArea = styled(SafeAreaView).attrs((props: SafeAreaProps) => ({
+  edges: props.edges || ["right", "top", "left"],
+})) <SafeAreaProps>`
+  flex: 1;
+  background-color: ${(props: SafeAreaProps) =>
+    props.color || theme.colors.bg.primary || "#f2f2f2"};
+`;
 
 export const MainContainer = styled.View<MainContainerProps>`
   flex: 1;
-  padding: ${(props) => props.padding || "0px 0px"};
-  background-color: ${(props) =>
+  padding: ${(props: MainContainerProps) => props.padding || "80px 0px"};
+  background-color: ${(props: MainContainerProps) =>
     props.color || theme.colors.brand || "transparent"};
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const RowContainer = styled.View<RowContainerProps>`
   flex-direction: row;
-  justify-content: ${(props) => props.justifyContent || "space-between"};
-  align-items: ${(props) => props.alignItems || "center"};
-  padding: ${(props) => props.padding || "0px"};
-  margin: ${(props) => props.margin || "0px"};
+  justify-content: ${(props: RowContainerProps) =>
+    props.justifyContent || "space-between"};
+  align-items: ${(props: RowContainerProps) => props.alignItems || "center"};
+  padding: ${(props: RowContainerProps) => props.padding || "0px"};
+  margin: ${(props: RowContainerProps) => props.margin || "0px"};
 `;
 
 export const CenteredContainer = styled.View<CenteredContainerProps>`
   flex: 1;
   justify-content: center;
   align-items: center;
-  position: ${({ absolute }) => (absolute ? "absolute" : "relative")};
-  ${({ absolute }) =>
+  position: ${({ absolute }: CenteredContainerProps) =>
+    absolute ? "absolute" : "relative"};
+  ${({ absolute }: CenteredContainerProps) =>
     absolute &&
     `
     top: 0;
@@ -78,23 +75,15 @@ export const CenteredContainer = styled.View<CenteredContainerProps>`
   `}
 `;
 
-interface CustomIconProps {
-  iconName: string;
-  iconLbr: string;
-  size?: number;
-  color?: string;
-  focused?: boolean;
-}
-
-export const StyledButton = styled(TouchableOpacity) <{ isHovered?: boolean }>`
-  background-color: ${(props) => (props.isHovered ? "#D8DaFF" : "#F5F5FF")};
+export const StyledButton = styled(TouchableOpacity) <StyledButtonProps>`
+  background-color: ${(props: StyledButtonProps) =>
+    props.isHovered ? "#D8DaFF" : "#F5F5FF"};
   padding: 10px 20px;
   border-radius: 8px;
   margin-top: 20px;
   border-width: 2px;
-  border-color: ${(props) => (props.isHovered ? "black" : "#DDD")};
+  border-color: ${(props: StyledButtonProps) =>
+    props.isHovered ? "black" : "#DDD"};
   align-items: center;
   justify-content: center;
 `;
-
-

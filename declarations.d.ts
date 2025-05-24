@@ -21,4 +21,4 @@ declare module "*.svg" {
 }
 
 export declare module 'react-native-searchable-dropdown';
-
+declare module 'styled-components/native';
