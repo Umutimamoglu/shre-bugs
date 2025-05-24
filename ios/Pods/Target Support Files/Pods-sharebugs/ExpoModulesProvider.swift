@@ -14,7 +14,6 @@ import ExpoFont
 import ExpoImagePicker
 import ExpoKeepAwake
 import ExpoSecureStore
-import ExpoSplashScreen
 
 @objc(ExpoModulesProvider)
 public class ExpoModulesProvider: ModulesProvider {
@@ -29,15 +28,13 @@ public class ExpoModulesProvider: ModulesProvider {
       FontUtilsModule.self,
       ImagePickerModule.self,
       KeepAwakeModule.self,
-      SecureStoreModule.self,
-      SplashScreenModule.self
+      SecureStoreModule.self
     ]
   }
 
   public override func getAppDelegateSubscribers() -> [ExpoAppDelegateSubscriber.Type] {
     return [
-      FileSystemBackgroundSessionHandler.self,
-      SplashScreenAppDelegateSubscriber.self
+      FileSystemBackgroundSessionHandler.self
     ]
   }
 
