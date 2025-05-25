@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Pressable, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, Pressable, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { AllBugsNavigationType, AllBugsStackParamList } from '@src/infrastracture/navigation/types';
 import { SafeArea } from '@src/components/main.style';
@@ -58,72 +58,74 @@ const AllBugDetail = () => {
 
     return (
         <SafeArea edges={['top']} color={theme.colors.ui.tertiary2}>
-            <HeaderContainerMyBugs>
-                <BackButton onPress={() => navigation.goBack()}>
-                    <MaterialCommunityIcons name="arrow-left" size={36} color='black' />
-                </BackButton>
-                <HeaderTitle>Hata Detayı</HeaderTitle>
-                <TouchableOpacity onPress={() => navigation.goBack}>
-                    <MaterialCommunityIcons name="information" size={36} color={bug.color.code} />
-                </TouchableOpacity>
-            </HeaderContainerMyBugs>
+            <ScrollView>
+                <HeaderContainerMyBugs>
+                    <BackButton onPress={() => navigation.goBack()}>
+                        <MaterialCommunityIcons name="arrow-left" size={36} color='black' />
+                    </BackButton>
+                    <HeaderTitle>Hata Detayı</HeaderTitle>
+                    <TouchableOpacity onPress={() => navigation.goBack}>
+                        <MaterialCommunityIcons name="information" size={36} color={bug.color.code} />
+                    </TouchableOpacity>
+                </HeaderContainerMyBugs>
 
 
 
-            <View style={styles.container}>
+                <View style={styles.container}>
 
 
-                {bug.image && (
-                    <Image
-                        source={{ uri: `${axiosInstance.defaults.baseURL}/${bug.image}` }}
-                        style={styles.image}
-                    />
-                )}
+                    {bug.image && (
+                        <Image
+                            source={{ uri: `${axiosInstance.defaults.baseURL}/${bug.image}` }}
+                            style={styles.image}
+                        />
+                    )}
 
-                {/* ⭐ Kalp ikonu */}
-                <Pressable onPress={toggleFavorite} style={{ alignSelf: 'center', marginTop: 10 }}>
-                    <MaterialIcons
-                        name={isFavorite ? 'favorite' : 'favorite-border'}
-                        size={28}
-                        color={bug.color.code}
-                    />
-                </Pressable>
+                    {/* ⭐ Kalp ikonu */}
+                    <Pressable onPress={toggleFavorite} style={{ alignSelf: 'center', marginTop: 10 }}>
+                        <MaterialIcons
+                            name={isFavorite ? 'favorite' : 'favorite-border'}
+                            size={28}
+                            color={bug.color.code}
+                        />
+                    </Pressable>
 
-                <Text style={styles.label}>📝 Hata Adı</Text>
-                <Text style={styles.value}>{bug.name}</Text>
+                    <Text style={styles.label}>📝 Hata Adı</Text>
+                    <Text style={styles.value}>{bug.name}</Text>
 
-                <Text style={styles.label}>⚙️ Tür</Text>
-                <Text style={styles.value}>{bug.type}</Text>
+                    <Text style={styles.label}>⚙️ Tür</Text>
+                    <Text style={styles.value}>{bug.type}</Text>
 
-                <Text style={styles.label}>💻 Dil</Text>
-                <Text style={styles.value}>{bug.language}</Text>
+                    <Text style={styles.label}>💻 Dil</Text>
+                    <Text style={styles.value}>{bug.language}</Text>
 
-                <Text style={styles.label}>🛠️ Nasıl Çözüldü?</Text>
-                <Text style={styles.value}>{bug.howDidIFix || "Belirtilmedi"}</Text>
+                    <Text style={styles.label}>🛠️ Nasıl Çözüldü?</Text>
+                    <Text style={styles.value}>{bug.howDidIFix || "Belirtilmedi"}</Text>
 
-                <Text style={styles.label}>📌 Durum</Text>
-                <Text style={styles.value}>{bug.isFixed ? "✔️ Düzeltildi" : "❌ Bekliyor"}</Text>
+                    <Text style={styles.label}>📌 Durum</Text>
+                    <Text style={styles.value}>{bug.isFixed ? "✔️ Düzeltildi" : "❌ Bekliyor"}</Text>
 
 
-                <View style={{ alignItems: 'center', marginTop: 10 }}>
-                    <CustomButton
-                        onPress={navigateToAllBugChatScreen}
-                        color={bug.color.code}
-                        height="44px"
-                        width="32%"
-                        borderRadius="12px"
-                        marginTop="0"
-                        style={({ pressed }: { pressed: boolean }) => [
-                            {
-                                opacity: pressed ? 0.7 : 1,
-                                transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
-                            },
-                        ]}
-                    >
-                        <UpdateButtonText>Sohbete Git</UpdateButtonText>
-                    </CustomButton>
+                    <View style={{ alignItems: 'center', marginTop: 10 }}>
+                        <CustomButton
+                            onPress={navigateToAllBugChatScreen}
+                            color={bug.color.code}
+                            height="44px"
+                            width="32%"
+                            borderRadius="12px"
+                            marginTop="0"
+                            style={({ pressed }: { pressed: boolean }) => [
+                                {
+                                    opacity: pressed ? 0.7 : 1,
+                                    transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
+                                },
+                            ]}
+                        >
+                            <UpdateButtonText>Sohbete Git</UpdateButtonText>
+                        </CustomButton>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </SafeArea>
     );
 };

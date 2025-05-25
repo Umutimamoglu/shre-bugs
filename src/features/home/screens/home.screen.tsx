@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, Text, Touchable, TouchableOpacity } from "react-native";
+import { Pressable, ScrollView, Text, Touchable, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { BASE_URL } from "@src/services/connections";
 import { CreateBugPayload, IColor } from "types";
@@ -126,105 +126,108 @@ function HomeScreen() {
 
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
-
-            <HeaderContainerHome>
-                <BackButton onPress={() => navigation.goBack()}>
-                    <MaterialCommunityIcons name="bug" size={36} color="#000" />
-                </BackButton>
-                <HeaderTitle>Hata Ekle</HeaderTitle>
-                <TouchableOpacity onPress={goToİnfo}>
-                    <MaterialCommunityIcons name="information" size={36} color="black" />
-
-                </TouchableOpacity>
-            </HeaderContainerHome>
-            <HomeMainContainer>
+            <ScrollView>
 
 
-                <CardContainer>
-                    <LabelText>Galeriye git veya kameranı kullan
-                        !
-                    </LabelText>
-                    <ImagePickerContainer>
-                        <ImagePickerButton onPress={selectImageFromLibrary}>
-                            <MaterialIcons name="photo-library" size={24} color="#A5616C" />
-                            <Text> {" Galeri"} </Text>
-                        </ImagePickerButton>
-                    </ImagePickerContainer>
+                <HeaderContainerHome>
+                    <BackButton onPress={() => navigation.goBack()}>
+                        <MaterialCommunityIcons name="bug" size={36} color="#000" />
+                    </BackButton>
+                    <HeaderTitle>Hata Ekle</HeaderTitle>
+                    <TouchableOpacity onPress={goToİnfo}>
+                        <MaterialCommunityIcons name="information" size={36} color="black" />
 
-                    <DropdownContainer style={{ zIndex: 3000 }}>
-                        <StyledDropDownPicker
-                            open={languageOpen}
-                            value={languageValue}
-                            items={languageItems}
-                            setOpen={setLanguageOpen}
-                            setValue={setLanguageValue}
-                            setItems={setLanguageItems}
-                            placeholder="Yazılım dili seçin"
-                            zIndex={3000}
-                            zIndexInverse={1000}
+                    </TouchableOpacity>
+                </HeaderContainerHome>
+                <HomeMainContainer>
+
+
+                    <CardContainer>
+                        <LabelText>Galeriye git veya kameranı kullan
+                            !
+                        </LabelText>
+                        <ImagePickerContainer>
+                            <ImagePickerButton onPress={selectImageFromLibrary}>
+                                <MaterialIcons name="photo-library" size={24} color="#A5616C" />
+                                <Text> {" Galeri"} </Text>
+                            </ImagePickerButton>
+                        </ImagePickerContainer>
+
+                        <DropdownContainer style={{ zIndex: 3000 }}>
+                            <StyledDropDownPicker
+                                open={languageOpen}
+                                value={languageValue}
+                                items={languageItems}
+                                setOpen={setLanguageOpen}
+                                setValue={setLanguageValue}
+                                setItems={setLanguageItems}
+                                placeholder="Yazılım dili seçin"
+                                zIndex={3000}
+                                zIndexInverse={1000}
+                            />
+                        </DropdownContainer>
+
+                        {/* Bug Türü Seçici */}
+                        <DropdownContainer style={{ zIndex: 2000 }}>
+                            <StyledDropDownPicker
+                                open={bugTypeOpen}
+                                value={bugTypeValue}
+                                items={bugTypeItems}
+                                setOpen={setBugTypeOpen}
+                                setValue={setBugTypeValue}
+                                setItems={setBugTypeItems}
+                                placeholder="Bug türünü seçiniz"
+                                zIndex={2000}
+                                zIndexInverse={1000}
+                            />
+                        </DropdownContainer>
+
+                        <TextInputStyled
+                            placeholder="Bug'a isim veriniz"
+                            value={newBug.name}
+                            onChangeText={(text: string) =>
+                                setNewBug((prev) => ({
+                                    ...prev,
+                                    name: text,
+                                }))
+                            }
+                            placeholderTextColor={theme.colors.text.primary}
+                            keyboardType="default"
                         />
-                    </DropdownContainer>
 
-                    {/* Bug Türü Seçici */}
-                    <DropdownContainer style={{ zIndex: 2000 }}>
-                        <StyledDropDownPicker
-                            open={bugTypeOpen}
-                            value={bugTypeValue}
-                            items={bugTypeItems}
-                            setOpen={setBugTypeOpen}
-                            setValue={setBugTypeValue}
-                            setItems={setBugTypeItems}
-                            placeholder="Bug türünü seçiniz"
-                            zIndex={2000}
-                            zIndexInverse={1000}
-                        />
-                    </DropdownContainer>
+                        <ColorPickerContainer>
+                            <ColorLabel backgroundColor={selectedColor.code}>
+                                <ColorLabelText>Colors</ColorLabelText>
+                            </ColorLabel>
+                            <ColorsContainer>
+                                {COLORS.map((_color: IColor) => (
+                                    <Pressable
+                                        key={_color.id}
+                                        onPress={() => {
+                                            setSelectedColor(_color);
+                                            setNewBug((prev) => ({
+                                                ...prev,
+                                                color: { id: _color.id, name: _color.name, code: _color.code },
+                                            }));
+                                        }}
+                                    >
+                                        <ColorCircle
+                                            backgroundColor={_color.code}
+                                            isSelected={_color.name === selectedColor.name}
+                                        />
+                                    </Pressable>
+                                ))}
+                            </ColorsContainer>
+                        </ColorPickerContainer>
 
-                    <TextInputStyled
-                        placeholder="Bug'a isim veriniz"
-                        value={newBug.name}
-                        onChangeText={(text: string) =>
-                            setNewBug((prev) => ({
-                                ...prev,
-                                name: text,
-                            }))
-                        }
-                        placeholderTextColor={theme.colors.text.primary}
-                        keyboardType="default"
-                    />
-
-                    <ColorPickerContainer>
-                        <ColorLabel backgroundColor={selectedColor.code}>
-                            <ColorLabelText>Colors</ColorLabelText>
-                        </ColorLabel>
-                        <ColorsContainer>
-                            {COLORS.map((_color: IColor) => (
-                                <Pressable
-                                    key={_color.id}
-                                    onPress={() => {
-                                        setSelectedColor(_color);
-                                        setNewBug((prev) => ({
-                                            ...prev,
-                                            color: { id: _color.id, name: _color.name, code: _color.code },
-                                        }));
-                                    }}
-                                >
-                                    <ColorCircle
-                                        backgroundColor={_color.code}
-                                        isSelected={_color.name === selectedColor.name}
-                                    />
-                                </Pressable>
-                            ))}
-                        </ColorsContainer>
-                    </ColorPickerContainer>
-
-                    <StyledPressableButton onPress={createNewBug}>
-                        <ButtonText>
-                            Yeni Hata Ekle
-                        </ButtonText>
-                    </StyledPressableButton>
-                </CardContainer>
-            </HomeMainContainer>
+                        <StyledPressableButton onPress={createNewBug}>
+                            <ButtonText>
+                                Yeni Hata Ekle
+                            </ButtonText>
+                        </StyledPressableButton>
+                    </CardContainer>
+                </HomeMainContainer>
+            </ScrollView>
         </SafeArea>
     );
 }

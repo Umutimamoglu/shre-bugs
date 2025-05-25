@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { RegisterUserTypes, LoginUserTypes, IAuthenticatedUser } from "types";
+import { IAuthenticatedUser } from "types";
 import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService, saveToken } from "./account.service";
 import { BASE_URL } from "../connections";
 interface AccountContextType {

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, use } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
     View,
     Image,
@@ -8,7 +8,8 @@ import {
     Dimensions,
     Pressable,
     Button,
-    ScrollView
+    ScrollView,
+    Platform,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -16,9 +17,10 @@ import { SafeArea } from '@src/components/main.style';
 import { AccountContext } from '@src/services/account/account.context';
 import { BASE_URL } from '@src/services/connections';
 import { theme } from '@src/theme';
+import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
 
 const ProfileScreen = () => {
-    const { width, height } = Dimensions.get('window');
+    const { width } = Dimensions.get('window');
     const { user, logout, updateProfile } = useContext(AccountContext);
 
     const [name, setName] = useState('');
@@ -27,10 +29,9 @@ const ProfileScreen = () => {
     const [userImage, setUserImage] = useState('');
     const [fixedBugsCount, setFixedBugsCount] = useState('');
     const [experience, setExperience] = useState('');
-    const [country, setCountry] = useState('');
-
-
-
+    const [countryCode, setCountryCode] = useState<CountryCode>('TR');
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+    const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -39,7 +40,11 @@ const ProfileScreen = () => {
             setPositionTitle(user.positionTitle || '');
             setFixedBugsCount(user.fixedBugsCount || '');
             setExperience(user.experience || '');
-            setCountry(user.country || '');
+
+            if (user.country && typeof user.country === 'string' && user.country.length === 2) {
+                setCountryCode(user.country as CountryCode);
+            }
+
             const finalImageUrl = user.image?.startsWith("http")
                 ? user.image
                 : `${BASE_URL}/${user.image}`;
@@ -88,7 +93,7 @@ const ProfileScreen = () => {
             image: userImage,
             fixedBugsCount,
             experience,
-            country
+            country: selectedCountry?.cca2 || countryCode || ''
         });
     };
 
@@ -106,7 +111,6 @@ const ProfileScreen = () => {
                     </View>
                 )}
 
-                {/* Galeri ve Kamera */}
                 <Pressable onPress={handleSelectImage} style={styles.pressable}>
                     <MaterialIcons name="photo-library" size={24} color="black" />
                     <Text style={styles.buttonText}>Galeriden Seç</Text>
@@ -117,7 +121,6 @@ const ProfileScreen = () => {
                     <Text style={styles.buttonText}>Fotoğraf Çek</Text>
                 </Pressable>
 
-                {/* 📝 Hata Adı gibi stillerle input alanları */}
                 <Text style={styles.label}>👤 İsim</Text>
                 <TextInput
                     style={styles.input}
@@ -142,7 +145,46 @@ const ProfileScreen = () => {
                     placeholder="Pozisyon"
                 />
 
-                {/* Butonlar */}
+                <Text style={styles.label}>📈 Deneyim</Text>
+                <TextInput
+                    style={styles.input}
+                    value={experience}
+                    onChangeText={setExperience}
+                    placeholder="Örn: 3 yıl"
+                />
+
+                <Text style={styles.label}>🌍 Ülke</Text>
+                <Pressable
+                    onPress={() => setIsCountryModalOpen(true)}
+                    style={styles.countryPicker}
+                >
+                    <Text style={{ fontSize: 16 }}>
+                        {
+                            typeof selectedCountry?.name === 'string'
+                                ? selectedCountry.name
+                                : typeof selectedCountry?.name === 'object' && 'common' in selectedCountry.name
+                                    ? selectedCountry.name.common
+                                    : 'Ülke seç'
+                        }
+                    </Text>
+                </Pressable>
+
+                <CountryPicker
+                    visible={isCountryModalOpen}
+                    withFilter
+                    withFlag
+                    withCountryNameButton={false}
+                    withAlphaFilter
+                    withEmoji
+                    countryCode={countryCode}
+                    onClose={() => setIsCountryModalOpen(false)}
+                    onSelect={(country: Country) => {
+                        setSelectedCountry(country);
+                        setCountryCode(country.cca2);
+                        setIsCountryModalOpen(false);
+                    }}
+                />
+
                 <View style={{ marginTop: 20 }}>
                     <Button title="Profili Güncelle" onPress={handleUpdateProfile} />
                     <Button title="Çıkış Yap" onPress={logout} color="#EF4444" />
@@ -204,5 +246,15 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 8,
         fontSize: 16,
+    },
+    countryPicker: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 6,
+        padding: 10,
+        backgroundColor: '#f2f2f2',
+        borderRadius: 10,
+        borderColor: '#ccc',
+        borderWidth: 2,
     },
 });
