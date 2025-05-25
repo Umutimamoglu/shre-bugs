@@ -109,7 +109,7 @@ export const updateProfileService = async (profileData: IAuthenticatedUser): Pro
         }
 
         // /api/bugs/update örnek endpoint; kendi backend rotanıza göre güncelleyin
-        const response = await axiosInstance.put("/api/bugs/update", formData, {
+        const response = await axiosInstance.put("/users/updateUser", formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
 

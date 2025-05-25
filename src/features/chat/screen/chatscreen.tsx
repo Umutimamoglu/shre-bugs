@@ -27,18 +27,26 @@ const fallbackImage = require("../../../../assets/userUnknown.png");
 const ChatScreen = () => {
     const route = useRoute<ChatScreenRouteProp>();
     const { bug } = route.params;
-    const { user } = useContext(AccountContext);
+    const { user, updateProfile } = useContext(AccountContext);
     const navigation = useNavigation<AllBugsNavigationType>();
 
     const { chatId, messages, isLoading, findOrCreateChat, fetchMessages, sendMessage } = useChat();
     const [newMessage, setNewMessage] = useState<string>("");
     const [bugUser, setBugUser] = useState<any>(null);
     const [forceFallback, setForceFallback] = useState(false);
-    // ✅ Buraya taşıdık (render'a en yakın)
+
+
     const profileImageSource = useMemo(() => {
         if (forceFallback || !bugUser?.image || bugUser.image.trim() === "") {
             return fallbackImage;
         }
+
+        // Eğer image zaten https:// ile başlıyorsa olduğu gibi kullan
+        if (bugUser.image.startsWith("http")) {
+            return { uri: bugUser.image };
+        }
+
+        // Aksi halde BASE_URL ile birleştir
         return { uri: `${BASE_URL}/${bugUser.image}` };
     }, [bugUser?.image, forceFallback]);
 
@@ -84,35 +92,66 @@ const ChatScreen = () => {
         }
     };
 
+    const handleIncrementFixedCount = async () => {
+        if (!bugUser || !bugUser._id || !bugUser.fixedBugsCount) return;
+
+        try {
+            const updatedCount = parseInt(bugUser.fixedBugsCount, 10) + 1;
+
+            // Eğer image file:// ile başlıyorsa, backend'e göndermemek için null yap
+            const safeImage = bugUser.image?.startsWith("file://")
+                ? null
+                : bugUser.image;
+
+            const updatedUser = {
+                ...bugUser,
+                fixedBugsCount: updatedCount.toString(),
+                image: safeImage, // 🔐 image güvenli hale getirildi
+            };
+
+            await updateProfile(updatedUser);
+
+            setBugUser(updatedUser);
+            console.log("✔️ fixedBugsCount güncellendi:", updatedCount);
+        } catch (error) {
+            console.error("fixedBugsCount güncellenirken hata:", error);
+        }
+    };
+
+
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
-            {/* Header */}
             <View style={styles.header}>
                 <BackButton onPress={() => navigation.goBack()}>
-                    <MaterialCommunityIcons name="arrow-left" size={36} color='black' />
+                    <MaterialCommunityIcons name="arrow-left" size={36} color="black" />
                 </BackButton>
 
                 {/* Kullanıcı Resmi */}
                 <Image
                     source={profileImageSource}
                     style={styles.profileImage}
-                    onError={() => setForceFallback(true)} // Yüklenemezse fallback'a geç
+                    onError={() => setForceFallback(true)}
                 />
 
                 {/* Kullanıcı Adı */}
                 <Text style={styles.headerTitle}>{bugUser?.name || "Unknown User"}</Text>
 
-                {/* Bilgi ikonu sağda */}
-                <View style={{ flex: 1, alignItems: 'flex-end', paddingRight: 12 }}>
+                {/* Sağ üstteki ikonlar */}
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, paddingRight: 12 }}>
+                    <TouchableOpacity
+                        style={styles.checkButton}
+                        onPress={handleIncrementFixedCount}
+                    >
+                        <Text style={styles.checkIcon}>✔️</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate("UserDetailScreen")}>
-                        <MaterialCommunityIcons name="information" size={30} color='black' />
+                        <MaterialCommunityIcons name="information" size={30} color="black" />
                     </TouchableOpacity>
                 </View>
             </View>
 
             <View style={styles.separator} />
 
-            {/* Mesaj Listesi */}
             <FlatList
                 data={messages}
                 keyExtractor={(item) => item._id}
@@ -121,7 +160,6 @@ const ChatScreen = () => {
                 )}
             />
 
-            {/* Mesaj Gönderme Alanı */}
             <View style={styles.inputContainer}>
                 <TextInput
                     value={newMessage}
@@ -193,5 +231,17 @@ const styles = StyleSheet.create({
     sendButtonText: {
         color: "white",
         fontWeight: "bold",
+    },
+    checkButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18, // yuvarlak
+        backgroundColor: '#22c55e', // yeşil (Tailwind: green-500)
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkIcon: {
+        fontSize: 18,
+        color: 'white',
     },
 });

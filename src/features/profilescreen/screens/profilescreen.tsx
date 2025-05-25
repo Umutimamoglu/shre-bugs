@@ -30,7 +30,7 @@ const ProfileScreen = () => {
     const [country, setCountry] = useState('');
 
 
-    console.log(user)
+
 
     useEffect(() => {
         if (user) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RegisterUserTypes, LoginUserTypes, IAuthenticatedUser } from "types";
 import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService, saveToken } from "./account.service";
+import { BASE_URL } from "../connections";
 interface AccountContextType {
     isLoading: boolean;
     error: string | null;
@@ -157,26 +158,55 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
     const updateProfile = async (profileData: IAuthenticatedUser) => {
         setIsLoading(true);
         setError(null);
-
+        console.log("update user çalıstı")
         try {
-            const updatedUser = await updateProfileService(profileData);
+            const formData = new FormData();
 
-            // Service'den dönen güncellenmiş user verisini context'te sakla
+            formData.append('_id', profileData._id);
+            formData.append('name', profileData.name);
+            formData.append('email', profileData.email);
+            formData.append('positionTitle', profileData.positionTitle || '');
+            formData.append('fixedBugsCount', profileData.fixedBugsCount || '');
+            formData.append('experience', profileData.experience || '');
+            formData.append('country', profileData.country || '');
+
+            if (profileData.image && profileData.image.startsWith("file://")) {
+                const filename = profileData.image.split('/').pop();
+                const match = /\.(\w+)$/.exec(filename || '');
+                const ext = match ? match[1] : 'jpg';
+                const mimeType = `image/${ext}`;
+
+                formData.append('image', {
+                    uri: profileData.image,
+                    name: filename,
+                    type: mimeType,
+                } as any);  // TypeScript için
+            }
+            console.log("fetch de çalıstı")
+            const response = await fetch(`${BASE_URL}/users/updateUser`, {
+                method: 'PUT',
+                headers: {
+                    // Content-Type belirtme! fetch bunu kendi ayarlıyor
+                },
+                body: formData
+            });
+
+            const updatedUser = await response.json();
+
+            if (!response.ok) throw new Error(updatedUser.message || 'Güncelleme başarısız');
+            console.log(response)
             setUser(updatedUser);
-
-            // AysncStorage'a da kaydetmek isterseniz:
             await AsyncStorage.setItem("@user", JSON.stringify(updatedUser));
-
             setIsLoggedIn(true);
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
+                console.error("Profil güncelleme hatası:", err.message);
             }
         } finally {
             setIsLoading(false);
         }
     };
-
 
     return (
         <AccountContext.Provider
