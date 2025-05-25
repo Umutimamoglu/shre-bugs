@@ -8,8 +8,8 @@ import {
     StyleSheet,
     Image,
 } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { AllBugsStackParamList } from "@src/infrastracture/navigation/types";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { AllBugsNavigationType, AllBugsStackParamList } from "@src/infrastracture/navigation/types";
 import { AccountContext } from "@src/services/account/account.context";
 import { useChat } from "@src/services/chat/chat.context";
 import { SafeArea } from "@src/components/main.style";
@@ -17,7 +17,8 @@ import { theme } from "@src/theme";
 import { BASE_URL } from "@src/services/connections";
 import MessageItem from "../components/messageItem";
 import axios from "axios";
-
+import { BackButton } from "@src/features/allbugfeed/components/feed.Styled";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 type ChatScreenRouteProp = RouteProp<AllBugsStackParamList, "ChatScreen">;
 
 const ChatScreen = () => {
@@ -28,7 +29,7 @@ const ChatScreen = () => {
     const { chatId, messages, isLoading, findOrCreateChat, fetchMessages, sendMessage } = useChat();
     const [newMessage, setNewMessage] = useState<string>("");
     const [bugUser, setBugUser] = useState<any>(null); // Kullanıcı bilgilerini saklamak için state
-
+    const navigation = useNavigation<AllBugsNavigationType>();
     useEffect(() => {
         console.log("🔹 ChatScreen Açıldı!");
         console.log("🟡 Bug Bilgileri:", bug);
@@ -80,9 +81,9 @@ const ChatScreen = () => {
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => console.log("Geri Git")}>
-                    <Text style={styles.backButton}>{"<"}</Text>
-                </TouchableOpacity>
+                <BackButton onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons name="arrow-left" size={36} color='black' />
+                </BackButton>
 
                 {/* Kullanıcı Resmi */}
                 {bugUser?.image ? (

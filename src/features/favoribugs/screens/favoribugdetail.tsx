@@ -1,18 +1,17 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    Image,
-    Pressable,
-    StyleSheet,
-    SafeAreaView,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
-import { AllBugsStackParamList, AllBugsNavigationType } from '@src/infrastracture/navigation/types';
+import { AllBugsNavigationType, AllBugsStackParamList } from '@src/infrastracture/navigation/types';
 import { axiosInstance } from '@src/services/account/account.service';
+import { SafeArea } from '@src/components/main.style';
+import { theme } from '@src/theme';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CustomButton } from '@src/features/account/components/acoount.styled';
+import { UpdateButtonText } from '@src/features/mybugs/components/bugdetailcomp.styled';
 
-
-
+import { HeaderContainerMyBugs } from '@src/features/mybugs/components/mybug.styled';
+import { BackButton, HeaderTitle } from '@src/features/allbugfeed/components/feed.Styled';
+import { ButtonText } from '@src/features/home/components/home.styled';
 
 type BugDetailRouteProp = RouteProp<AllBugsStackParamList, 'FavoriBugDettail'>;
 
@@ -25,104 +24,91 @@ const FavoriBugDettailScreen = () => {
         navigation.navigate('ChatScreen', { bug });
     };
 
-
-    const imageUri = bug.image
-        ? `${axiosInstance.defaults.baseURL}/${bug.image}`
-        : null;
-
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeArea edges={['top']} color={theme.colors.ui.tertiary2}>
+            <HeaderContainerMyBugs>
+                <BackButton onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
+                </BackButton>
+                <HeaderTitle>Hata Detayı</HeaderTitle>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons name="information" size={36} color="black" />
+                </TouchableOpacity>
+            </HeaderContainerMyBugs>
+
             <View style={styles.container}>
-                <Text style={styles.headerText}>Hata Detayları</Text>
+                {bug.image && (
+                    <Image
+                        source={{ uri: `${axiosInstance.defaults.baseURL}/${bug.image}` }}
+                        style={styles.image}
+                    />
+                )}
 
-                <View style={styles.imageContainer}>
-                    {imageUri ? (
-                        <Image
-                            source={{ uri: imageUri }}
-                            style={styles.image}
-                            onError={() =>
-                                console.warn('Resim yüklenemedi, varsayılan kullanılacak')
-                            }
-                        />
-                    ) : (
-                        <Text>Resim Bulunamadı</Text>
-                    )}
+                <Text style={styles.label}>📝 Hata Adı</Text>
+                <Text style={styles.value}>{bug.name}</Text>
+
+                <Text style={styles.label}>⚙️ Tür</Text>
+                <Text style={styles.value}>{bug.type}</Text>
+
+                <Text style={styles.label}>💻 Dil</Text>
+                <Text style={styles.value}>{bug.language}</Text>
+
+                <Text style={styles.label}>🛠️ Nasıl Çözüldü?</Text>
+                <Text style={styles.value}>{bug.howDidIFix || "Belirtilmedi"}</Text>
+
+                <Text style={styles.label}>📌 Durum</Text>
+                <Text style={styles.value}>{bug.isFixed ? "✔️ Düzeltildi" : "❌ Bekliyor"}</Text>
+
+                <View style={{ alignItems: 'center', marginTop: 10 }}>
+                    <CustomButton
+                        onPress={navigateToAllBugChatScreen}
+                        color={bug.color.code}
+                        height="44px"
+                        width="36%"
+                        borderRadius="12px"
+                        marginTop="0"
+                        style={({ pressed }: { pressed: boolean }) => [
+                            {
+                                opacity: pressed ? 0.7 : 1,
+                                transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
+                            },
+                        ]}
+                    >
+                        <UpdateButtonText>Mesaj Gönder</UpdateButtonText>
+                    </CustomButton>
                 </View>
-
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoText}>{bug.language}</Text>
-                </View>
-
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoText}>{bug.name}</Text>
-                </View>
-
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoText}>{bug.howDidIFix}</Text>
-                </View>
-
-                <Pressable onPress={navigateToAllBugChatScreen} style={styles.button}>
-                    <Text style={styles.buttonText}>Mesaj Gönder</Text>
-                </Pressable>
             </View>
-        </SafeAreaView>
+        </SafeArea>
     );
 };
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        // "zinc400" yerine yaklaşık bir gri ton (örnek: #a1a1aa)
-        backgroundColor: '#a1a1aa',
-    },
     container: {
         flex: 1,
-        marginHorizontal: 8, // Box mx="1" yerine 8 piksel
-    },
-    headerText: {
-        fontSize: 24, // "textXl"
-        textAlign: 'center',
-        marginBottom: 16, // mb="4" => 4*4=16 piksel
-        marginTop: 8,
-        fontWeight: 'bold',
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: 16,
+        backgroundColor: theme.colors.ui.tertiary2,
+        paddingHorizontal: 20,
+        paddingTop: 10,
     },
     image: {
-        width: 100,
-        height: 100,
-        marginTop: 10,
-    },
-    infoBox: {
-        // Box ml='5' ve mr='5' => 5*4=20 piksel kenarlıklar
-        marginHorizontal: 20,
-        // "gray250" yerine yaklaşık bir açık gri ton
-        backgroundColor: '#f5f5f4',
-        // "rounded-2xl" => borderRadius=16
-        borderRadius: 16,
+        width: '100%',
+        height: 180,
+        borderRadius: 12,
         marginBottom: 16,
     },
-    infoText: {
-        fontSize: 15,
-        lineHeight: 19,
-        padding: 12,
-        alignSelf: 'flex-start',
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginTop: 12,
+        color: '#666',
     },
-    button: {
-        marginTop: 56, // mt="14" => 14*4=56
-        alignSelf: 'center',
-        backgroundColor: '#007AFF', // iOS mavisi örneği
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 8,
-    },
-    buttonText: {
-        color: '#ffffff',
+    value: {
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: 'bold',
+        color: '#111',
+        backgroundColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 8,
+        marginTop: 4,
     },
 });
 

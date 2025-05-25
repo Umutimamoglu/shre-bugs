@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, use } from 'react';
 import {
     View,
     Image,
@@ -8,6 +8,7 @@ import {
     Dimensions,
     Pressable,
     Button,
+    ScrollView
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -18,164 +19,125 @@ import { theme } from '@src/theme';
 
 const ProfileScreen = () => {
     const { width, height } = Dimensions.get('window');
-
-    // Context’ten user, logout ve updateProfile fonksiyonlarını alıyoruz
     const { user, logout, updateProfile } = useContext(AccountContext);
 
-    // Ekrandaki form alanlarını yönetmek için state’ler
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [positionTitle, setPositionTitle] = useState('');
     const [userImage, setUserImage] = useState('');
 
-
+    console.log(user)
 
     useEffect(() => {
         if (user) {
             setName(user.name || '');
             setEmail(user.email || '');
             setPositionTitle(user.positionTitle || '');
-            console.log("🟠 Bug User Image:", user.image);
-
-            if (user?.image) {
-                setName(user.name || '');
-                setEmail(user.email || '');
-                setPositionTitle(user.positionTitle || '');
-
-                const finalImageUrl = user.image.startsWith("http") ? user.image : `${BASE_URL}/${user.image}`;
-                setUserImage(finalImageUrl);
-                console.log("User image path ->", finalImageUrl);
-            } else {
-                setUserImage("");
-            }
+            const finalImageUrl = user.image?.startsWith("http")
+                ? user.image
+                : `${BASE_URL}/${user.image}`;
+            setUserImage(finalImageUrl || '');
         }
     }, [user]);
 
-
-    // Galeriden resim seç
     const handleSelectImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             alert('Galeriye erişim izni gerekli!');
             return;
         }
-
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             quality: 1,
         });
-
         if (!result.canceled && result.assets?.length) {
             setUserImage(result.assets[0].uri);
-            console.log('Seçilen resim:', result.assets[0].uri);
         }
     };
 
-    // Kamera ile resim çek
     const handleCaptureImage = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== 'granted') {
             alert('Kameraya erişim izni gerekli!');
             return;
         }
-
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
             quality: 1,
         });
-
         if (!result.canceled && result.assets?.length) {
             setUserImage(result.assets[0].uri);
-            console.log('Çekilen resim:', result.assets[0].uri);
         }
     };
 
-    // Profili güncelle
     const handleUpdateProfile = async () => {
-        if (!user) {
-            console.error('User is null. Profile cannot be updated.');
-            return;
-        }
-
-        try {
-            await updateProfile({
-                _id: user._id,
-                name,
-                email,
-                positionTitle,
-                image: userImage,
-            });
-            console.log('Profil güncellendi!');
-        } catch (err) {
-            console.error('Profil güncellenirken hata oluştu:', err);
-        }
+        if (!user) return;
+        await updateProfile({
+            _id: user._id,
+            name,
+            email,
+            positionTitle,
+            image: userImage,
+        });
     };
 
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
-            <View style={styles.container}>
-                {user ? (
+            <ScrollView contentContainerStyle={styles.container}>
+                {user && (
                     <View style={styles.centered}>
-                        <View style={styles.imageContainer}>
-                            {userImage ? (
-                                <Image source={{ uri: userImage }} style={styles.profileImage} />
-                            ) : (
-                                <Image
-                                    source={{ uri: 'https://via.placeholder.com/100' }}
-                                    style={styles.profileImage}
-                                />
-                            )}
-                        </View>
-                        <View style={styles.userInfo}>
-                            <Text style={styles.userName}>{user.name}</Text>
-                            <Text style={styles.userEmail}>{user.email}</Text>
-                        </View>
+                        <Image
+                            source={{ uri: userImage || 'https://via.placeholder.com/100' }}
+                            style={styles.profileImage}
+                        />
+                        <Text style={styles.userName}>{user.name}</Text>
+                        <Text style={styles.userEmail}>{user.email}</Text>
                     </View>
-                ) : (
-                    <Text style={styles.noUserText}>No user data available</Text>
                 )}
 
-                {/* Galeriden Seç */}
+                {/* Galeri ve Kamera */}
                 <Pressable onPress={handleSelectImage} style={styles.pressable}>
                     <MaterialIcons name="photo-library" size={24} color="black" />
                     <Text style={styles.buttonText}>Galeriden Seç</Text>
                 </Pressable>
 
-                {/* Kamera ile Fotoğraf */}
                 <Pressable onPress={handleCaptureImage} style={styles.pressable}>
                     <MaterialIcons name="photo-camera" size={24} color="black" />
                     <Text style={styles.buttonText}>Fotoğraf Çek</Text>
                 </Pressable>
 
-                {/* Kullanıcı Adı */}
+                {/* 📝 Hata Adı gibi stillerle input alanları */}
+                <Text style={styles.label}>👤 İsim</Text>
                 <TextInput
-                    style={[styles.textInput, { width: width * 0.8, height: height * 0.05 }]}
+                    style={styles.input}
                     value={name}
                     onChangeText={setName}
                     placeholder="Adınız"
                 />
 
-                {/* E-posta */}
+                <Text style={styles.label}>📧 E-posta</Text>
                 <TextInput
-                    style={[styles.textInput, { width: width * 0.8, height: height * 0.05 }]}
+                    style={styles.input}
                     value={email}
                     onChangeText={setEmail}
                     placeholder="E-posta"
                 />
 
-                {/* Pozisyon Bilgisi */}
+                <Text style={styles.label}>💼 Pozisyon</Text>
                 <TextInput
-                    style={[styles.textInput, { width: width * 0.8, height: height * 0.05 }]}
+                    style={styles.input}
                     value={positionTitle}
                     onChangeText={setPositionTitle}
                     placeholder="Pozisyon"
                 />
 
                 {/* Butonlar */}
-                <Button title="Profili Güncelle" onPress={handleUpdateProfile} />
-                <Button title="Çıkış Yap" onPress={logout} />
-            </View>
+                <View style={{ marginTop: 20 }}>
+                    <Button title="Profili Güncelle" onPress={handleUpdateProfile} />
+                    <Button title="Çıkış Yap" onPress={logout} color="#EF4444" />
+                </View>
+            </ScrollView>
         </SafeArea>
     );
 };
@@ -184,55 +146,53 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 16,
+        backgroundColor: theme.colors.ui.tertiary2,
     },
     centered: {
         alignItems: 'center',
-        justifyContent: 'center',
-    },
-    imageContainer: {
-        marginBottom: 16,
+        marginBottom: 20,
     },
     profileImage: {
         width: 100,
         height: 100,
         borderRadius: 50,
-    },
-    userInfo: {
-        alignItems: 'center',
+        marginBottom: 10,
     },
     userName: {
         fontSize: 20,
         fontWeight: 'bold',
+        marginBottom: 4,
     },
     userEmail: {
         fontSize: 16,
         color: 'gray',
     },
-    noUserText: {
-        fontSize: 18,
-        textAlign: 'center',
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginTop: 16,
+        color: '#555',
     },
-    textInput: {
-        marginHorizontal: 1,
+    input: {
         fontSize: 16,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 20,
-        marginVertical: 10,
-        paddingHorizontal: 15,
+        backgroundColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 6,
+        borderColor: '#ccc',
         borderWidth: 2,
-        borderColor: '#3F3C3C',
     },
     pressable: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 8,
+        marginTop: 10,
         padding: 10,
-        backgroundColor: 'lightgray',
-        borderRadius: 5,
+        backgroundColor: '#e5e7eb',
+        borderRadius: 8,
     },
     buttonText: {
-        marginLeft: 5,
+        marginLeft: 8,
+        fontSize: 16,
     },
 });

@@ -28,7 +28,7 @@ import {
 } from '@src/features/mybugs/components/mybug.styled';
 import { theme } from '@src/theme';
 import { SafeArea } from '@src/components/main.style';
-import { HeaderContainerHome } from '@src/features/home/components/home.styled';
+import { HeaderContainerHome, HomeMainContainer } from '@src/features/home/components/home.styled';
 import { BackButton, HeaderTitle } from '@src/features/allbugfeed/components/feed.Styled';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -58,6 +58,8 @@ const MyBugsScreen = () => {
     };
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
+
+
 
             <HeaderContainerMyBugs>
                 <BackButton onPress={() => navigation.goBack()}>

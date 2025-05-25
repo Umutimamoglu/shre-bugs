@@ -62,7 +62,7 @@ export const HeaderContainerHome = styled.View`
   justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 16px;
-  padding-horizontal: 0px;
+  padding-horizontal: 10px;
 `;
 
 export const TitleText = styled.Text`

@@ -49,7 +49,7 @@ const BugDetailScreen = () => {
                 </BackButton>
                 <HeaderTitle>Hata Detayı</HeaderTitle>
                 <TouchableOpacity onPress={() => navigation.navigate("Bugs")}>
-                    <MaterialCommunityIcons name="information" size={36} color="black" />
+                    <MaterialCommunityIcons name="information" size={36} color={bug.color.code} />
                 </TouchableOpacity>
             </HeaderContainerMyBugs>
 

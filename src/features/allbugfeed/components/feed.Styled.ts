@@ -8,12 +8,12 @@ export const Container = styled.View`
 `;
 
 export const HeaderContainer = styled.View`
-  flex-direction: row;
+ flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
-  margin-bottom: 16px;
-  padding-horizontal: 16px;
+  margin-top: 10px;
+
+  padding-horizontal: 10px;
 `;
 
 export const BackButton = styled(Pressable)`
@@ -54,6 +54,7 @@ export const SearchBarContainer = styled.View`
   padding-horizontal: 16px;
   align-items: center;
   margin-bottom: 16px;
+  margin-top: 10px;
 `;
 
 export const SearchInput = styled(TextInput)`

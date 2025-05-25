@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, Pressable, Text, StyleSheet } from 'react-native';
+import { View, Image, Pressable, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { AllBugsNavigationType, AllBugsStackParamList } from '@src/infrastracture/navigation/types';
 import { SafeArea } from '@src/components/main.style';
 import { axiosInstance } from '@src/services/account/account.service';
 import { useBug } from '@src/services/bugs/bugs.context';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import UpdateButton from '@src/features/mybugs/components/buttonscomponent';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CustomButton } from '@src/features/account/components/acoount.styled';
 import { UpdateButtonText } from '@src/features/mybugs/components/bugdetailcomp.styled';
 import { theme } from '@src/theme';
+import { BackButton, HeaderTitle } from '../components/feed.Styled';
+import { HeaderContainerMyBugs } from '@src/features/mybugs/components/mybug.styled';
 
 type BugDetailRouteProp = RouteProp<AllBugsStackParamList, 'AllBugDetail'>;
 
@@ -56,8 +58,20 @@ const AllBugDetail = () => {
 
     return (
         <SafeArea edges={['top']} color={theme.colors.ui.tertiary2}>
+            <HeaderContainerMyBugs>
+                <BackButton onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons name="arrow-left" size={36} color='black' />
+                </BackButton>
+                <HeaderTitle>Hata Detayı</HeaderTitle>
+                <TouchableOpacity onPress={() => navigation.goBack}>
+                    <MaterialCommunityIcons name="information" size={36} color={bug.color.code} />
+                </TouchableOpacity>
+            </HeaderContainerMyBugs>
+
+
+
             <View style={styles.container}>
-                <Text style={styles.header}>🪲 Hata Detayı</Text>
+
 
                 {bug.image && (
                     <Image

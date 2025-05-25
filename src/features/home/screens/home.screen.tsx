@@ -126,18 +126,19 @@ function HomeScreen() {
 
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
+
+            <HeaderContainerHome>
+                <BackButton onPress={() => navigation.goBack()}>
+                    <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
+                </BackButton>
+                <HeaderTitle>Hata Ekle</HeaderTitle>
+                <TouchableOpacity onPress={goToİnfo}>
+                    <MaterialCommunityIcons name="information" size={36} color="black" />
+
+                </TouchableOpacity>
+            </HeaderContainerHome>
             <HomeMainContainer>
 
-                <HeaderContainerHome>
-                    <BackButton onPress={() => navigation.goBack()}>
-                        <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
-                    </BackButton>
-                    <HeaderTitle>Hata Ekle</HeaderTitle>
-                    <TouchableOpacity onPress={goToİnfo}>
-                        <MaterialCommunityIcons name="information" size={36} color="black" />
-
-                    </TouchableOpacity>
-                </HeaderContainerHome>
 
                 <CardContainer>
                     <LabelText>Galeriye git veya kameranı kullan
