@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Feather from '@expo/vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 import styled from 'styled-components/native';
 
@@ -17,22 +17,37 @@ import { useBug } from '@src/services/bugs/bugs.context';
 import { CheckboxWrapper, Container, FilterButton, FilterRow, FilterText, ItemSeparator, ListContainer, SearchInput, SearchRow } from '../components/favori.styled';
 import { AllBugsNavigationType } from '@src/infrastracture/navigation/types';
 import FavoriBug from '../components/favoriBug';
+import AllBug from '@src/features/allbugfeed/components/allBug';
 
 
 
 const FavoriBugsScreen = () => {
-    const { allBugs, isLoading, error, refreshAllBugs } = useBug();
+    const { allFavorites, isLoading, error, refreshAllFavorites } = useBug();
     const [isChecked, setIsChecked] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation<AllBugsNavigationType>();
+    const isFocused = useIsFocused();
+    const [filteredData, setFilteredData] = useState<IAllBugs[]>([]);
 
-    const filteredData = allBugs?.filter((bug) => {
-        const matchesSearchQuery =
-            bug.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            bug.language.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesIsChecked = !isChecked || bug.isFixed;
-        return matchesSearchQuery && matchesIsChecked;
-    });
+    useEffect(() => {
+        if (isFocused) {
+            refreshAllFavorites(); // sadece ekran açıldığında API'den veri çek
+        }
+    }, [isFocused]);
+
+    useEffect(() => {
+        const filtered = allFavorites?.filter((bug) => {
+            const matchesSearchQuery =
+                bug.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                bug.language.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesIsChecked = !isChecked || bug.isFixed;
+            return matchesSearchQuery && matchesIsChecked;
+        }) || [];
+        setFilteredData(filtered);
+    }, [allFavorites, isChecked, searchQuery]);
+
+
+
 
     const renderItem = ({ item }: { item: IAllBugs }) => (
         <Pressable onPress={() => navigation.navigate('FavoriBugDettail', { bug: item })}>
@@ -71,7 +86,7 @@ const FavoriBugsScreen = () => {
                 <SearchInput
                     placeholder="Search..."
                     value={searchQuery}
-                    onChangeText={(text) => setSearchQuery(text)}
+                    onChangeText={(text: string) => setSearchQuery(text)}
                 />
             </SearchRow>
 

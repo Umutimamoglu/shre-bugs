@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome } from '@expo/vector-icons'; // Heart icon için
-
+import { FontAwesome } from '@expo/vector-icons';
 import { AllBugsNavigationType } from '@src/infrastracture/navigation/types';
 import { IAllBugs } from 'types';
+import { useBug } from '@src/services/bugs/bugs.context';
 
 type BugProps = {
     bug: IAllBugs;
@@ -12,43 +12,45 @@ type BugProps = {
 
 const AllBug = ({ bug }: BugProps) => {
     const navigation = useNavigation<AllBugsNavigationType>();
+    const { allFavorites } = useBug();
 
     const navigateToBugDetailScreen = () => {
         navigation.navigate('AllBugDetail', { bug });
     };
 
+    const isFavorite = useMemo(() => {
+        if (!Array.isArray(allFavorites)) return false;
+        return allFavorites.some(fav => fav._id?.toString() === bug._id?.toString());
+    }, [allFavorites, bug._id]);
+
     const formattedDate = new Date(bug.createdAt).toLocaleDateString();
     const formattedTime = new Date(bug.createdAt).toLocaleTimeString();
+    const heartIcon = isFavorite ? 'heart' : 'heart-o';
 
-    // Metni belli bir karakterden sonra kesmek için
-    const truncateText = (text: string, limit: number) => {
-        return text.length > limit ? text.substring(0, limit) + '...' : text;
-    };
+    const truncate = (text: string, max: number) =>
+        text.length > max ? text.slice(0, max) + '...' : text;
 
     return (
         <View style={styles.wrapper}>
-            {/* Sol taraftaki Heart ikonu */}
             <View style={styles.iconWrapper}>
-                <FontAwesome name="heart" size={24} color={bug.color.code} />
+                <FontAwesome name={heartIcon} size={24} color={bug.color.code} />
             </View>
 
-            {/* Sağ taraftaki kartın tamamı */}
-            <Pressable onPress={navigateToBugDetailScreen} style={[styles.cardContainer, { borderColor: bug.color.code }]}>
-                {/* Kartın üst kısmı (beyaz) */}
-                <View style={[styles.topSection]}>
+            <Pressable
+                onPress={navigateToBugDetailScreen}
+                style={[styles.cardContainer, { borderColor: bug.color.code }]}
+            >
+                <View style={styles.topSection}>
                     <Text style={styles.languageAndType}>
-                        {truncateText(bug.language, 10)}{'  '}
-                        {truncateText(bug.type, 15)}
+                        {truncate(bug.language, 10)}{'  '}
+                        {truncate(bug.type, 15)}
                     </Text>
-                    <Text style={styles.bugName}>{truncateText(bug.name, 30)}</Text>
+                    <Text style={styles.bugName}>{truncate(bug.name, 30)}</Text>
                 </View>
 
-                {/* Kartın alt kısmı (renkli) */}
                 <View style={[styles.bottomSection, { backgroundColor: bug.color.code }]}>
                     <Text style={styles.bottomText}>
-                        {bug.user?.name ?? "Unknown User"} {'  '}
-                        {formattedDate} {'  '}
-                        {formattedTime} {'  '}
+                        {bug.user?.name ?? 'Unknown'} • {formattedDate} • {formattedTime}
                     </Text>
                 </View>
             </Pressable>
@@ -56,7 +58,11 @@ const AllBug = ({ bug }: BugProps) => {
     );
 };
 
+
+
 export default AllBug;
+
+
 
 const styles = StyleSheet.create({
     wrapper: {

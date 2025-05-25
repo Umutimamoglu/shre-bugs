@@ -140,7 +140,7 @@ export const addfavorirequest = async (updatedFields: IBug): Promise<IBug> => {
 export const getAllFavroites = async (): Promise<IAllBugs[]> => {
     try {
         const response = await axiosInstance.get('/api/bugs/getAllFavori/');
-        console.log('Sunucudan gelen yanıt:', response.data);
+
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {

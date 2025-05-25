@@ -150,8 +150,7 @@ function HomeScreen() {
                         </ImagePickerButton>
                     </ImagePickerContainer>
 
-                    {/* Programlama Dili Seçici */}
-                    <DropdownContainer>
+                    <DropdownContainer style={{ zIndex: 3000 }}>
                         <StyledDropDownPicker
                             open={languageOpen}
                             value={languageValue}
@@ -160,11 +159,13 @@ function HomeScreen() {
                             setValue={setLanguageValue}
                             setItems={setLanguageItems}
                             placeholder="Yazılım dili seçin"
+                            zIndex={3000}
+                            zIndexInverse={1000}
                         />
                     </DropdownContainer>
 
                     {/* Bug Türü Seçici */}
-                    <DropdownContainer>
+                    <DropdownContainer style={{ zIndex: 2000 }}>
                         <StyledDropDownPicker
                             open={bugTypeOpen}
                             value={bugTypeValue}
@@ -173,13 +174,15 @@ function HomeScreen() {
                             setValue={setBugTypeValue}
                             setItems={setBugTypeItems}
                             placeholder="Bug türünü seçiniz"
+                            zIndex={2000}
+                            zIndexInverse={1000}
                         />
                     </DropdownContainer>
 
                     <TextInputStyled
                         placeholder="Bug'a isim veriniz"
                         value={newBug.name}
-                        onChangeText={(text) =>
+                        onChangeText={(text: string) =>
                             setNewBug((prev) => ({
                                 ...prev,
                                 name: text,
@@ -216,7 +219,7 @@ function HomeScreen() {
 
                     <StyledPressableButton onPress={createNewBug}>
                         <ButtonText>
-                            Bug Ekle
+                            Yeni Hata Ekle
                         </ButtonText>
                     </StyledPressableButton>
                 </CardContainer>

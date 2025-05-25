@@ -43,6 +43,9 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     };
 
+
+
+
     const fetchAllBugs = async () => {
         setIsLoading(true);
         setError(null);
@@ -66,6 +69,7 @@ export const BugProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         try {
             const bugs = await getAllFavroites();
             setallFavorites(bugs);
+
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);

@@ -14,15 +14,14 @@ interface HomeMainContainerProps {
   marginTop?: string;
 }
 
+// HomeMainContainer'da props tipi belirtildi
 export const HomeMainContainer = styled.View<HomeMainContainerProps>`
-    flex: 1;
-    padding-horizontal: ${(props) => props.padding || "16px"};
-    background-color: ${(props) =>
-    props.color || theme.colors.ui.tertiary3};
-    align-items: ${(props) => props.alignItems || "center"};
-    margin-top: ${(props) => props.marginTop || "0px"};
+  flex: 1;
+  padding-horizontal: ${(props: HomeMainContainerProps) => props.padding || "16px"};
+  background-color: ${(props: HomeMainContainerProps) => props.color || theme.colors.ui.tertiary3};
+  align-items: ${(props: HomeMainContainerProps) => props.alignItems || "center"};
+  margin-top: ${(props: HomeMainContainerProps) => props.marginTop || "0px"};
 `;
-
 
 interface CardContainerProps {
   width?: string;
@@ -39,21 +38,21 @@ interface CardContainerProps {
   elevation?: number;
 }
 
+// CardContainer'daki propslar tiplendirildi
 export const CardContainer = styled.View<CardContainerProps>`
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    width: ${(props) => props.width || "100%"};
-    background-color: ${(props) => props.backgroundColor || "#F3F7FF"};
-    margin-top: ${(props) => props.marginTop || "0px"};
-    border-radius: ${(props) => props.borderRadius || "10px"};
-    padding: ${(props) => props.padding || "16px"};
-    shadow-color: ${(props) => props.shadowColor || "#000"};
-    shadow-offset: ${(props) =>
-    `${props.shadowOffsetWidth || 0}px ${props.shadowOffsetHeight || 2}px`};
-    shadow-opacity: ${(props) => props.shadowOpacity || 0.2};
-    shadow-radius: ${(props) => props.shadowRadius || 4}px;
-    elevation: ${(props) => props.elevation || 5};
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: ${(props: CardContainerProps) => props.width || "100%"};
+  background-color: ${(props: CardContainerProps) => props.backgroundColor || "#F3F7FF"};
+  margin-top: ${(props: CardContainerProps) => props.marginTop || "0px"};
+  border-radius: ${(props: CardContainerProps) => props.borderRadius || "10px"};
+  padding: ${(props: CardContainerProps) => props.padding || "16px"};
+  shadow-color: ${(props: CardContainerProps) => props.shadowColor || "#000"};
+  shadow-offset: ${(props: CardContainerProps) => `${props.shadowOffsetWidth || 0}px ${props.shadowOffsetHeight || 2}px`};
+  shadow-opacity: ${(props: CardContainerProps) => props.shadowOpacity || 0.2};
+  shadow-radius: ${(props: CardContainerProps) => props.shadowRadius || 4}px;
+  elevation: ${(props: CardContainerProps) => props.elevation || 5};
 `;
 
 
@@ -146,7 +145,7 @@ export const TextInputStyled = styled.TextInput`
     border-width: 1px;
     border-radius: 8px;
     width: 100%;
-    height: 40px;
+    height: 50px;
     color: #000;
     margin-top: 15px; /* Birim eklenerek düzenlendi */
 `;
@@ -185,12 +184,12 @@ export const ButtonText = styled.Text`
 
 // Seçilen renk etiketi
 export const ColorLabel = styled.View<{ backgroundColor: string }>`
-border-radius: 5px;
-padding: 4px 8px;
-align-self: flex-start;
-background-color: ${(props) => props.backgroundColor};
-
+  border-radius: 5px;
+  padding: 4px 8px;
+  align-self: flex-start;
+  background-color: ${(props: { backgroundColor: string }) => props.backgroundColor};
 `;
+
 
 export const ColorLabelText = styled.Text`
 color: #fff;
@@ -205,17 +204,18 @@ export const ColorsContainer = styled.View`
     margin-top: 14px; /* Birim eklenerek düzenlendi */
 `;
 
-// Renk daireleri
+
+// ColorCircle bileşeninde props tipi
+
 export const ColorCircle = styled.View<{ backgroundColor: string; isSelected: boolean }>`
-width: 24px;
-height: 24px;
-border-radius: 12px;
-background-color: ${(props) => props.backgroundColor};
-border-width: ${(props) => (props.isSelected ? "2px" : "0px")};
-border-color: #000;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: ${(props: { backgroundColor: string; isSelected: boolean }) => props.backgroundColor};
+  border-width: ${(props: { backgroundColor: string; isSelected: boolean }) =>
+    props.isSelected ? "2px" : "0px"};
+  border-color: #000;
 `;
-
-
 
 interface StyledButtonProps {
   backgroundColor?: string;
@@ -236,13 +236,13 @@ export const ButtonContainer = styled.View`
   `;
 
 export const StyledPressableButton = styled.Pressable<StyledButtonProps>`
-    background-color: ${(props) => props.backgroundColor || "#A6D2E1"};
-    width: ${(props) => props.width || "80%"};
-    height: ${(props) => props.height || "50px"};
-    border-radius: ${(props) => props.borderRadius || "20px"};
-    justify-content: center;
-    align-items: center;
-  `;
+  background-color: ${(props: StyledButtonProps) => props.backgroundColor || "#7C9D96"};
+  width: ${(props: StyledButtonProps) => props.width || "80%"};
+  height: ${(props: StyledButtonProps) => props.height || "46px"};
+  border-radius: ${(props: StyledButtonProps) => props.borderRadius || "10px"};
+  justify-content: center;
+  align-items: center;
+`;
 
 
 interface StyledButtonProps {

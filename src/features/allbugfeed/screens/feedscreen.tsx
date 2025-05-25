@@ -16,6 +16,7 @@ import AllBug from '../components/allBug';
 import { SafeArea } from '@src/components/main.style';
 import { theme } from '@src/theme';
 
+
 import {
     Container,
     SearchBarContainer,
@@ -36,7 +37,16 @@ const FeedScreen = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedBug, setSelectedBug] = useState<IAllBugs | null>(null);
 
-    const { allBugs, isLoading, error, refreshAllBugs } = useBug();
+    const { allBugs, isLoading, error, refreshAllBugs, allFavorites, refreshAllFavorites } = useBug();
+
+
+    console.log(allFavorites?.map(bug => bug._id));
+    useEffect(() => {
+        refreshAllFavorites();
+    }, []);
+
+
+
 
     useEffect(() => {
         refreshAllBugs();
@@ -62,6 +72,7 @@ const FeedScreen = () => {
         bug.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
         bug.language.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
 
     const renderItem = ({ item }: { item: IAllBugs }) => (
         <Pressable onPress={() => setSelectedBug(item)}>
@@ -97,7 +108,7 @@ const FeedScreen = () => {
                     <SearchInput
                         placeholder="Ara..."
                         value={searchQuery}
-                        onChangeText={(text) => setSearchQuery(text)}
+                        onChangeText={(text: string) => setSearchQuery(text)}
                     />
                 </SearchBarContainer>
 
