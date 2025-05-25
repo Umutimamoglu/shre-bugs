@@ -25,6 +25,10 @@ const ProfileScreen = () => {
     const [email, setEmail] = useState('');
     const [positionTitle, setPositionTitle] = useState('');
     const [userImage, setUserImage] = useState('');
+    const [fixedBugsCount, setFixedBugsCount] = useState('');
+    const [experience, setExperience] = useState('');
+    const [country, setCountry] = useState('');
+
 
     console.log(user)
 
@@ -33,6 +37,9 @@ const ProfileScreen = () => {
             setName(user.name || '');
             setEmail(user.email || '');
             setPositionTitle(user.positionTitle || '');
+            setFixedBugsCount(user.fixedBugsCount || '');
+            setExperience(user.experience || '');
+            setCountry(user.country || '');
             const finalImageUrl = user.image?.startsWith("http")
                 ? user.image
                 : `${BASE_URL}/${user.image}`;
@@ -79,6 +86,9 @@ const ProfileScreen = () => {
             email,
             positionTitle,
             image: userImage,
+            fixedBugsCount,
+            experience,
+            country
         });
     };
 

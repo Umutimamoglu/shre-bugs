@@ -29,19 +29,28 @@ export const deleteToken = async (key: string) => {
     }
 };
 
-// Register User
-export const registerUser = async ({ email, name, password, image, positionTitle }: RegisterUserTypes) => {
+// Register User// ✅ GÜNCELLENMİŞ HALİ
+export const registerUser = async ({ email, name, password, image, positionTitle, fixedBugsCount, experience, country }: RegisterUserTypes) => {
     console.log("Registering user:", { email, name, password, image });
+
     try {
         const response = await axiosInstance.post("/users/create", {
             email,
             password,
             name,
             image,
-            positionTitle
+            positionTitle,
+            fixedBugsCount,
+            experience,
+            country
         });
+
         console.log("User registration successful:", response.data.user);
-        return response.data.user;
+
+        return {
+            token: response.data.token,     // ✅ token'ı da döndür
+            user: response.data.user
+        };
     } catch (error) {
         if (error instanceof AxiosError) {
             console.error("Axios error during registration:", {
@@ -57,6 +66,7 @@ export const registerUser = async ({ email, name, password, image, positionTitle
         }
     }
 };
+
 export const loginUser = async ({ email, password }: LoginUserTypes) => {
 
 

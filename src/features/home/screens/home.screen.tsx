@@ -129,7 +129,7 @@ function HomeScreen() {
 
             <HeaderContainerHome>
                 <BackButton onPress={() => navigation.goBack()}>
-                    <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
+                    <MaterialCommunityIcons name="bug" size={36} color="#000" />
                 </BackButton>
                 <HeaderTitle>Hata Ekle</HeaderTitle>
                 <TouchableOpacity onPress={goToİnfo}>

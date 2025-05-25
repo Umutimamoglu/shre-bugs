@@ -5,6 +5,9 @@ interface IAuthenticatedUser {
     _id: string;
     image?: string | null;
     positionTitle: string,
+    fixedBugsCount: string,
+    experience: string,
+    country: string
 }
 
 export interface IColor {
@@ -110,6 +113,9 @@ export type RegisterUserTypes = {
     password: string;
     image: string | null; // Null değerini de destekle
     positionTitle: string;
+    fixedBugsCount: string;
+    experience: string;
+    country: string;
 };
 type LoginUserTypes = {
     email: string;

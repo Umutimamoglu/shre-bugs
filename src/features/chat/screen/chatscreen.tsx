@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
     FlatList,
     TextInput,
@@ -19,22 +19,30 @@ import MessageItem from "../components/messageItem";
 import axios from "axios";
 import { BackButton } from "@src/features/allbugfeed/components/feed.Styled";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { faLeftRight } from "@fortawesome/free-solid-svg-icons";
 type ChatScreenRouteProp = RouteProp<AllBugsStackParamList, "ChatScreen">;
+
+const fallbackImage = require("../../../../assets/userUnknown.png");
 
 const ChatScreen = () => {
     const route = useRoute<ChatScreenRouteProp>();
     const { bug } = route.params;
     const { user } = useContext(AccountContext);
+    const navigation = useNavigation<AllBugsNavigationType>();
 
     const { chatId, messages, isLoading, findOrCreateChat, fetchMessages, sendMessage } = useChat();
     const [newMessage, setNewMessage] = useState<string>("");
-    const [bugUser, setBugUser] = useState<any>(null); // Kullanıcı bilgilerini saklamak için state
-    const navigation = useNavigation<AllBugsNavigationType>();
-    useEffect(() => {
-        console.log("🔹 ChatScreen Açıldı!");
-        console.log("🟡 Bug Bilgileri:", bug);
-        console.log("🟢 Kullanıcı Bilgileri:", user);
+    const [bugUser, setBugUser] = useState<any>(null);
+    const [forceFallback, setForceFallback] = useState(false);
+    // ✅ Buraya taşıdık (render'a en yakın)
+    const profileImageSource = useMemo(() => {
+        if (forceFallback || !bugUser?.image || bugUser.image.trim() === "") {
+            return fallbackImage;
+        }
+        return { uri: `${BASE_URL}/${bugUser.image}` };
+    }, [bugUser?.image, forceFallback]);
 
+    useEffect(() => {
         if (!user || !bug) return;
 
         const initChat = async () => {
@@ -51,7 +59,6 @@ const ChatScreen = () => {
         initChat();
     }, [user, bug]);
 
-    // Backend'den kullanıcının tüm bilgilerini getir
     const fetchUserDetails = async () => {
         if (!bug?.user?._id) return;
 
@@ -86,14 +93,21 @@ const ChatScreen = () => {
                 </BackButton>
 
                 {/* Kullanıcı Resmi */}
-                {bugUser?.image ? (
-                    <Image source={{ uri: `${BASE_URL}/${bugUser.image}` }} style={styles.profileImage} />
-                ) : (
-                    <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.profileImage} />
-                )}
+                <Image
+                    source={profileImageSource}
+                    style={styles.profileImage}
+                    onError={() => setForceFallback(true)} // Yüklenemezse fallback'a geç
+                />
 
                 {/* Kullanıcı Adı */}
                 <Text style={styles.headerTitle}>{bugUser?.name || "Unknown User"}</Text>
+
+                {/* Bilgi ikonu sağda */}
+                <View style={{ flex: 1, alignItems: 'flex-end', paddingRight: 12 }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("UserDetailScreen")}>
+                        <MaterialCommunityIcons name="information" size={30} color='black' />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View style={styles.separator} />

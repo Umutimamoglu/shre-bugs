@@ -1,8 +1,7 @@
 import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RegisterUserTypes, LoginUserTypes, IAuthenticatedUser } from "types";
-import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService } from "./account.service";
-
+import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService, saveToken } from "./account.service";
 interface AccountContextType {
     isLoading: boolean;
     error: string | null;
@@ -15,7 +14,10 @@ interface AccountContextType {
         password: string,
         name: string,
         image: string | null,
-        positionTitle: string
+        positionTitle: string,
+        fixedBugsCount: string,
+        experience: string,
+        country: string
     ) => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
@@ -57,18 +59,24 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         password: string,
         name: string,
         image: string | null,
-        positionTitle: string
+        positionTitle: string,
+        fixedBugsCount: string,
+        experience: string,
+        country: string
     ) => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const registeredUser = await registerUser({
+            const { user: registeredUser, token } = await registerUser({
                 email,
-                name,
                 password,
+                name,
                 image,
                 positionTitle,
+                fixedBugsCount,
+                experience,
+                country
             });
 
             const authenticatedUser: IAuthenticatedUser = {
@@ -77,11 +85,18 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 name: registeredUser.name,
                 image: registeredUser.image || null,
                 positionTitle: registeredUser.positionTitle,
+                fixedBugsCount: registeredUser.fixedBugsCount,
+                experience: registeredUser.experience,
+                country: registeredUser.country
             };
 
             setUser(authenticatedUser);
             setIsLoggedIn(true);
+
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            await saveToken("blossom_user_token", token);
             await AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser));
+
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message);
@@ -90,6 +105,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(false);
         }
     };
+
 
     const login = async (email: string, password: string) => {
         setIsLoading(true);
@@ -104,6 +120,9 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 name: response.user.name,
                 image: response.user.image || null,
                 positionTitle: response.user.positionTitle,
+                fixedBugsCount: response.user.fixedBugsCount,
+                experience: response.user.experience,
+                country: response.user.country
             };
 
             await AsyncStorage.setItem("@user", JSON.stringify(authenticatedUser));
@@ -118,7 +137,6 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(false);
         }
     };
-
     const logout = async () => {
         setIsLoading(true);
         setError(null);
