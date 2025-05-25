@@ -9,10 +9,12 @@ interface CustomButtonProps {
   borderRadius?: string;
   width?: string;
   height?: string;
+  marginTop?: string;
   borderWidth?: string;
   borderColor?: string;
   textColor?: string;
   onPress: () => void;
+
 }
 
 export const InputsContainer = styled.View`
@@ -42,7 +44,9 @@ export const CustomButton = styled(Pressable) <CustomButtonProps>`
   width: ${({ width }: CustomButtonProps) => width || "95%"};
    height: ${({ height }: CustomButtonProps) => height || "50px"}; 
   border-width: ${({ borderWidth }: CustomButtonProps) => borderWidth || "0px"};
+    margin-top: ${({ marginTop }: CustomButtonProps) => marginTop || "0px"};
   border-color: ${({ borderColor }: CustomButtonProps) => borderColor || "transparent"};
+  
   align-items: center;
   justify-content: center;
   align-self: center;

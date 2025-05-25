@@ -5,7 +5,7 @@ import { KeyboardCloser } from "@src/components/keyboard-closer.component";
 import { AuthScreenNavigationType } from '@src/infrastracture/navigation/types';
 import { AccountContext } from '@src/services/account/account.context';
 import { BottomContainer, ButtonText, CustomButton, InputsContainer, TopContainer } from '../components/acoount.styled';
-import { MainContainer, SafeArea } from '@src/components/main.style';
+import { MainContainer, SafeArea, StyledInput } from '@src/components/main.style';
 import { theme } from '@src/theme';
 import { Title } from '../components/title.component';
 import { Header } from '../components/header.component';
@@ -98,18 +98,7 @@ const SignUpScreen = () => {
                             control={control}
                             name="name"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
-                                    style={{
-                                        width: 300,
-                                        height: 44,
-                                        backgroundColor: "#FAFAFA",
-                                        borderRadius: 10,
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        paddingHorizontal: 10,
-                                        borderWidth: 2,
-                                        borderColor: "#ccc",
-                                    }}
+                                <StyledInput
                                     placeholder="Ad Soyad"
                                     onChangeText={onChange}
                                     value={value}
@@ -119,24 +108,11 @@ const SignUpScreen = () => {
                             )}
                         />
 
-
-
                         <Controller
                             control={control}
                             name="positionTitle"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
-                                    style={{
-                                        width: 300,
-                                        height: 44,
-                                        backgroundColor: "#FAFAFA",
-                                        borderRadius: 10,
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        paddingHorizontal: 10,
-                                        borderWidth: 2,
-                                        borderColor: "#ccc",
-                                    }}
+                                <StyledInput
                                     placeholder="Pozisyon"
                                     onChangeText={onChange}
                                     value={value}
@@ -146,24 +122,11 @@ const SignUpScreen = () => {
                             )}
                         />
 
-
-
                         <Controller
                             control={control}
                             name="email"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
-                                    style={{
-                                        width: 300,
-                                        height: 44,
-                                        backgroundColor: "#FAFAFA",
-                                        borderRadius: 10,
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        paddingHorizontal: 10,
-                                        borderWidth: 2,
-                                        borderColor: "#ccc",
-                                    }}
+                                <StyledInput
                                     placeholder="E-Posta"
                                     onChangeText={onChange}
                                     value={value}
@@ -174,59 +137,34 @@ const SignUpScreen = () => {
                             )}
                         />
 
-
-
                         <Controller
                             control={control}
                             name="password"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
-                                    style={{
-                                        width: 300,
-                                        height: 44,
-                                        backgroundColor: "#FAFAFA",
-                                        borderRadius: 10,
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        paddingHorizontal: 10,
-                                        borderWidth: 2,
-                                        borderColor: "#ccc",
-                                    }}
+                                <StyledInput
                                     placeholder="Şifre"
                                     onChangeText={onChange}
                                     value={value}
                                     onBlur={onBlur}
-                                    secureTextEntry={true}
+                                    secureTextEntry
                                 />
                             )}
                         />
-
-
 
                         <Controller
                             control={control}
                             name="confirmPassword"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
-                                    style={{
-                                        width: 300,
-                                        height: 44,
-                                        backgroundColor: "#FAFAFA",
-                                        borderRadius: 10,
-                                        marginTop: 5,
-                                        marginBottom: 5,
-                                        paddingHorizontal: 10,
-                                        borderWidth: 2,
-                                        borderColor: "#ccc",
-                                    }}
+                                <StyledInput
                                     placeholder="Şifre Tekrar"
                                     onChangeText={onChange}
                                     value={value}
                                     onBlur={onBlur}
-                                    secureTextEntry={true}
+                                    secureTextEntry
                                 />
                             )}
                         />
+
                         {errors.confirmPassword && <Text style={{ color: 'red' }}>{errors.confirmPassword.message}</Text>}
 
                         <Pressable onPress={navigateToSignInScreen}>

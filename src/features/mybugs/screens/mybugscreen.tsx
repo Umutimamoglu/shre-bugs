@@ -63,7 +63,7 @@ const MyBugsScreen = () => {
                 <BackButton onPress={() => navigation.goBack()}>
                     <MaterialCommunityIcons name="arrow-left" size={36} color="#000" />
                 </BackButton>
-                <HeaderTitle>Hata Ekle</HeaderTitle>
+                <HeaderTitle>Hatalarım</HeaderTitle>
                 <TouchableOpacity onPress={goToİnfo}>
                     <MaterialCommunityIcons name="information" size={36} color="black" />
 
@@ -98,7 +98,7 @@ const MyBugsScreen = () => {
                     <SearchInput
                         placeholder="Ara..."
                         value={searchQuery}
-                        onChangeText={(text) => setSearchQuery(text)}
+                        onChangeText={(text: string) => setSearchQuery(text)}
                     />
                 </SearchRow>
             </TopContainer>

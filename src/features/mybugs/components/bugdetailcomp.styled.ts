@@ -46,6 +46,7 @@ export const ToggleButton = styled.TouchableOpacity<ToggleButtonProps>`
   padding: 10px 20px;
   border-radius: 8px;
   margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 export const ToggleButtonText = styled.Text`

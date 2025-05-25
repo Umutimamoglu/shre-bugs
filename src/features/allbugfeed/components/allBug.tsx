@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
-import { Pressable, View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { AllBugsNavigationType } from '@src/infrastracture/navigation/types';
 import { IAllBugs } from 'types';
 import { useBug } from '@src/services/bugs/bugs.context';
@@ -12,40 +14,74 @@ type BugProps = {
 
 const AllBug = ({ bug }: BugProps) => {
     const navigation = useNavigation<AllBugsNavigationType>();
-    const { allFavorites } = useBug();
+    const { addFavroites } = useBug();
+    const [pressed, setPressed] = useState(false);
+
+    // AsyncStorage'tan favori durumunu oku
+    useEffect(() => {
+        const loadFavorite = async () => {
+            try {
+                const storedValue = await AsyncStorage.getItem(`favorite:${bug._id}`);
+                if (storedValue === 'true') {
+                    setPressed(true);
+                }
+            } catch (err) {
+                console.error("Favori durumu okunamadı:", err);
+            }
+        };
+        loadFavorite();
+    }, [bug._id]);
+
+    // Favori durumunu değiştir
+    const toggleFavorite = async () => {
+        try {
+            const newState = !pressed;
+            setPressed(newState);
+            await AsyncStorage.setItem(`favorite:${bug._id}`, newState.toString());
+
+            if (newState) {
+                await addFavroites(bug);
+            }
+            // Burada favoriden çıkarma işlemi istenirse yapılabilir
+        } catch (err) {
+            console.error("Favori güncellenemedi:", err);
+        }
+    };
 
     const navigateToBugDetailScreen = () => {
         navigation.navigate('AllBugDetail', { bug });
     };
 
-    const isFavorite = useMemo(() => {
-        if (!Array.isArray(allFavorites)) return false;
-        return allFavorites.some(fav => fav._id?.toString() === bug._id?.toString());
-    }, [allFavorites, bug._id]);
-
     const formattedDate = new Date(bug.createdAt).toLocaleDateString();
     const formattedTime = new Date(bug.createdAt).toLocaleTimeString();
-    const heartIcon = isFavorite ? 'heart' : 'heart-o';
 
-    const truncate = (text: string, max: number) =>
-        text.length > max ? text.slice(0, max) + '...' : text;
+    const truncateText = (text: string, limit: number) =>
+        text.length > limit ? text.substring(0, limit) + '...' : text;
 
     return (
         <View style={styles.wrapper}>
-            <View style={styles.iconWrapper}>
-                <FontAwesome name={heartIcon} size={24} color={bug.color.code} />
-            </View>
+            {/* Kalp ikonu */}
+            <TouchableOpacity onPress={toggleFavorite}>
+                <View style={styles.iconWrapper}>
+                    <FontAwesome
+                        name={pressed ? 'heart' : 'heart-o'}
+                        size={24}
+                        color={bug.color.code}
+                    />
+                </View>
+            </TouchableOpacity>
 
+            {/* Kartın geri kalanı */}
             <Pressable
                 onPress={navigateToBugDetailScreen}
                 style={[styles.cardContainer, { borderColor: bug.color.code }]}
             >
                 <View style={styles.topSection}>
                     <Text style={styles.languageAndType}>
-                        {truncate(bug.language, 10)}{'  '}
-                        {truncate(bug.type, 15)}
+                        {truncateText(bug.language, 10)}{'  '}
+                        {truncateText(bug.type, 15)}
                     </Text>
-                    <Text style={styles.bugName}>{truncate(bug.name, 30)}</Text>
+                    <Text style={styles.bugName}>{truncateText(bug.name, 30)}</Text>
                 </View>
 
                 <View style={[styles.bottomSection, { backgroundColor: bug.color.code }]}>
@@ -58,12 +94,7 @@ const AllBug = ({ bug }: BugProps) => {
     );
 };
 
-
-
 export default AllBug;
-
-
-
 const styles = StyleSheet.create({
     wrapper: {
         flexDirection: 'row',

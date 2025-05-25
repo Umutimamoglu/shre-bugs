@@ -28,6 +28,11 @@ interface StyledButtonProps {
   isHovered?: boolean;
 }
 
+interface StyledInputProps {
+  width?: string;
+  height?: string;
+}
+
 // ✳️ styled bileşenleri
 export const KeyboardCloserView = styled.View`
   flex: 1;
@@ -86,4 +91,17 @@ export const StyledButton = styled(TouchableOpacity) <StyledButtonProps>`
     props.isHovered ? "black" : "#DDD"};
   align-items: center;
   justify-content: center;
+`;
+
+
+export const StyledInput = styled.TextInput<StyledInputProps>`
+  width: ${({ width }) => width || "300px"};
+  height: ${({ height }) => height || "44px"};
+  background-color: #fafafa;
+  border-radius: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-horizontal: 10px;
+  border-width: 2px;
+  border-color: #ccc;
 `;

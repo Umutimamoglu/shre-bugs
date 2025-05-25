@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { View, Image, Pressable, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Image, Pressable, Text, StyleSheet } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { AllBugsNavigationType, AllBugsStackParamList } from '@src/infrastracture/navigation/types';
 import { SafeArea } from '@src/components/main.style';
 import { axiosInstance } from '@src/services/account/account.service';
 import { useBug } from '@src/services/bugs/bugs.context';
-import UpdateButton from '@src/features/mybugs/components/buttonscomponent';
 import { MaterialIcons } from '@expo/vector-icons';
+import UpdateButton from '@src/features/mybugs/components/buttonscomponent';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CustomButton } from '@src/features/account/components/acoount.styled';
+import { UpdateButtonText } from '@src/features/mybugs/components/bugdetailcomp.styled';
+import { theme } from '@src/theme';
 
 type BugDetailRouteProp = RouteProp<AllBugsStackParamList, 'AllBugDetail'>;
 
@@ -16,57 +20,94 @@ const AllBugDetail = () => {
     const { addFavroites } = useBug();
     const navigation = useNavigation<AllBugsNavigationType>();
 
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    useEffect(() => {
+        const loadFavoriteStatus = async () => {
+            try {
+                const stored = await AsyncStorage.getItem(`favorite:${bug._id}`);
+                if (stored === 'true') {
+                    setIsFavorite(true);
+                }
+            } catch (e) {
+                console.error("Favori durumu alınamadı:", e);
+            }
+        };
+        loadFavoriteStatus();
+    }, [bug._id]);
+
+    const toggleFavorite = async () => {
+        try {
+            const newStatus = !isFavorite;
+            setIsFavorite(newStatus);
+            await AsyncStorage.setItem(`favorite:${bug._id}`, newStatus.toString());
+            if (newStatus) {
+                await addFavroites(bug);
+            }
+            // Favoriden çıkarma yapılacaksa buraya ekleyebilirsin
+        } catch (e) {
+            console.error("Favori güncellenemedi:", e);
+        }
+    };
+
     const navigateToAllBugChatScreen = () => {
         navigation.navigate("ChatScreen", { bug });
     };
 
-    const [pressed, setPressed] = useState(false);
-
     return (
-        <SafeArea>
+        <SafeArea edges={['top']} color={theme.colors.ui.tertiary2}>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Hata Detayları</Text>
-                </View>
+                <Text style={styles.header}>🪲 Hata Detayı</Text>
 
-                <View style={styles.separator} />
+                {bug.image && (
+                    <Image
+                        source={{ uri: `${axiosInstance.defaults.baseURL}/${bug.image}` }}
+                        style={styles.image}
+                    />
+                )}
 
-                <View style={styles.imageContainer}>
-                    {bug.image ? (
-                        <Image
-                            source={{ uri: `${axiosInstance.defaults.baseURL}/${bug.image}` }}
-                            style={styles.image}
-                            onError={() => console.warn('Resim yüklenemedi, varsayılan kullanılacak')}
-                        />
-                    ) : (
-                        <Text>Resim Bulunamadı</Text>
-                    )}
-                    <Pressable
-                        onPressIn={() => setPressed(true)}
-                        onPressOut={() => setPressed(false)}
-                        onPress={() => addFavroites(bug)}
-                        style={({ pressed }) => [
+                {/* ⭐ Kalp ikonu */}
+                <Pressable onPress={toggleFavorite} style={{ alignSelf: 'center', marginTop: 10 }}>
+                    <MaterialIcons
+                        name={isFavorite ? 'favorite' : 'favorite-border'}
+                        size={28}
+                        color={bug.color.code}
+                    />
+                </Pressable>
+
+                <Text style={styles.label}>📝 Hata Adı</Text>
+                <Text style={styles.value}>{bug.name}</Text>
+
+                <Text style={styles.label}>⚙️ Tür</Text>
+                <Text style={styles.value}>{bug.type}</Text>
+
+                <Text style={styles.label}>💻 Dil</Text>
+                <Text style={styles.value}>{bug.language}</Text>
+
+                <Text style={styles.label}>🛠️ Nasıl Çözüldü?</Text>
+                <Text style={styles.value}>{bug.howDidIFix || "Belirtilmedi"}</Text>
+
+                <Text style={styles.label}>📌 Durum</Text>
+                <Text style={styles.value}>{bug.isFixed ? "✔️ Düzeltildi" : "❌ Bekliyor"}</Text>
+
+
+                <View style={{ alignItems: 'center', marginTop: 10 }}>
+                    <CustomButton
+                        onPress={navigateToAllBugChatScreen}
+                        color={bug.color.code}
+                        height="44px"
+                        width="32%"
+                        borderRadius="12px"
+                        marginTop="0"
+                        style={({ pressed }: { pressed: boolean }) => [
                             {
-                                opacity: pressed ? 0.6 : 1,
+                                opacity: pressed ? 0.7 : 1,
+                                transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
                             },
                         ]}
                     >
-                        <MaterialIcons name="favorite-border" size={24} color="black" />
-                    </Pressable>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.infoText}>{bug.language}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.infoText}>{bug.name}</Text>
-                </View>
-                <View style={styles.infoContainer}>
-                    <Text style={styles.infoText}>{bug.howDidIFix}</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <UpdateButton onPress={navigateToAllBugChatScreen}>
-                        <Text>Sohbete Git</Text>
-                    </UpdateButton>
+                        <UpdateButtonText>Sohbete Git</UpdateButtonText>
+                    </CustomButton>
                 </View>
             </View>
         </SafeArea>
@@ -76,59 +117,41 @@ const AllBugDetail = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#D8D0D0',
+        backgroundColor: theme.colors.ui.tertiary2,
+        paddingHorizontal: 20,
+        paddingTop: 10,
     },
     header: {
-        marginVertical: 16,
-        alignItems: 'center',
-    },
-    headerText: {
         fontSize: 24,
         fontWeight: 'bold',
-        textShadowColor: 'rgba(239, 68, 68, 0.2)',
-        textShadowOffset: { width: 2, height: 2 },
-        textShadowRadius: 4,
-        color: 'white',
-    },
-    separator: {
-        height: 1,
-        backgroundColor: '#3F3C3C',
-        marginVertical: 16,
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        marginVertical: 16,
+        alignSelf: 'center',
+        marginBottom: 20,
+        color: '#333',
     },
     image: {
-        width: 100,
-        height: 100,
-        marginTop: 10,
-    },
-    infoContainer: {
-        marginHorizontal: 16,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 20,
+        width: '100%',
+        height: 180,
+        borderRadius: 12,
         marginBottom: 16,
-        padding: 12,
-        borderWidth: 2,
-        borderColor: '#3F3C3C',
     },
-    infoText: {
-        fontSize: 15,
-        lineHeight: 19,
-        textAlign: 'center',
-        color: 'black',
+    label: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginTop: 12,
+        color: '#666',
+    },
+    value: {
+        fontSize: 16,
         fontWeight: 'bold',
-        textShadowColor: 'rgba(0, 0, 0, 0.1)',
-        textShadowOffset: { width: 2, height: 2 },
-        textShadowRadius: 4,
-    },
-    buttonContainer: {
-        marginTop: 56,
-        alignItems: 'center',
+        color: '#111',
+        backgroundColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 8,
+        marginTop: 4,
     },
 });
 
 export default AllBugDetail;
+
+
+
