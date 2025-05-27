@@ -134,7 +134,12 @@ const ChatScreen = () => {
                 />
 
                 {/* Kullanıcı Adı */}
-                <Text style={styles.headerTitle}>{bugUser?.name || "Unknown User"}</Text>
+                <Text style={styles.headerTitle}>
+                    {(bugUser?.name?.length ?? 0) > 18
+                        ? bugUser.name.slice(0, 18) + '...'
+                        : bugUser?.name || 'Unknown User'}
+                </Text>
+
 
                 {/* Sağ üstteki ikonlar */}
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, paddingRight: 12 }}>
@@ -189,7 +194,7 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "bold",
         color: "#444",
         marginLeft: 10,

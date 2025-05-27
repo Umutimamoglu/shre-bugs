@@ -18,11 +18,13 @@ import { AccountContext } from '@src/services/account/account.context';
 import { BASE_URL } from '@src/services/connections';
 import { theme } from '@src/theme';
 import CountryPicker, { Country, CountryCode } from 'react-native-country-picker-modal';
+import { useNavigation } from '@react-navigation/native';
+import { BugsNavigationType } from '@src/infrastracture/navigation/types';
 
 const ProfileScreen = () => {
     const { width } = Dimensions.get('window');
     const { user, logout, updateProfile } = useContext(AccountContext);
-
+    const navigation = useNavigation<BugsNavigationType>();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [positionTitle, setPositionTitle] = useState('');
