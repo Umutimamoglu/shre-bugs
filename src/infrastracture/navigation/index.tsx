@@ -7,6 +7,8 @@ import { ActivityIndicator, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NotificationProvider } from "@src/hooks/NotificationContext";
 import * as Notifications from 'expo-notifications';
+import { navigationRef } from './navigationRef';
+
 export const Navigation = () => {
     const { user, isLoading } = useContext(AccountContext);
 
@@ -33,7 +35,7 @@ export const Navigation = () => {
         <NotificationProvider>
 
 
-            <NavigationContainer>
+            <NavigationContainer ref={navigationRef}>
                 {user ? <AppStackNavigator /> : <AuthStackNavigator />}
             </NavigationContainer>
         </NotificationProvider>

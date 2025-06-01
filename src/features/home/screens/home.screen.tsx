@@ -32,7 +32,7 @@ import { BackButton, HeaderContainer, HeaderTitle } from "@src/features/allbugfe
 import { useNavigation } from '@react-navigation/native';
 import { AllBugsNavigationType } from "@src/infrastracture/navigation/types";
 import { useNotification } from "@src/hooks/NotificationContext";
-
+import { useNotificationObserver } from "../../../hooks/useNotificationObserver";
 
 
 const COLORS = getColors();
@@ -67,7 +67,7 @@ function HomeScreen() {
         howDidIFix: "",
     });
 
-
+    useNotificationObserver();
 
     const createNewBug = async () => {
         try {
