@@ -18,9 +18,10 @@ interface AccountContextType {
         positionTitle: string,
         fixedBugsCount: string,
         experience: string,
-        country: string
+        country: string,
+        pushNotificationToken: string | null
     ) => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string, token: string) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (profileData: IAuthenticatedUser) => Promise<void>;
 }
@@ -148,6 +149,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             delete axiosInstance.defaults.headers.common["Authorization"];
             setUser(null);
             setIsLoggedIn(false);
+            await AsyncStorage.removeItem('sahrebugsStoken');
         } catch (err) {
             setError("Logout failed. Please try again.");
         } finally {

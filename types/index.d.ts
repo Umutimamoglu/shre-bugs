@@ -7,7 +7,8 @@ interface IAuthenticatedUser {
     positionTitle: string,
     fixedBugsCount: string,
     experience: string,
-    country: string
+    country: string,
+    pushNotificationToken?: string | null;
 }
 
 export interface IColor {
@@ -127,6 +128,7 @@ export interface SignUpFormData {
     password: string;
     confirmPassword: string;
     positionTitle: string;
+    pushNotificationToken?: string | null;
 };
 export interface SignIbFormData {
 

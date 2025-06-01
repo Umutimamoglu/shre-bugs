@@ -8,8 +8,12 @@ import React, {
 } from "react";
 import * as Notifications from "expo-notifications";
 import { EventSubscription } from "expo-notifications";
-import * as Device from "expo-device"; // 👈 yeni eklendi
+import * as Device from "expo-device";
 import { registerForPushNotificationsAsync } from "../utils/registerforPushNotifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { BASE_URL } from "@src/services/connections";
+
 
 interface NotificationContextType {
     expoPushToken: string | null;
@@ -17,9 +21,7 @@ interface NotificationContextType {
     error: Error | null;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(
-    undefined
-);
+const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export const useNotification = () => {
     const context = useContext(NotificationContext);
@@ -43,27 +45,39 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     const notificationListener = useRef<EventSubscription | null>(null);
     const responseListener = useRef<EventSubscription | null>(null);
 
+    // 🚀 Bildirim izni ve token alma işlemi
     useEffect(() => {
-        // ✅ Sadece fiziksel cihazda token al
-        if (Device.isDevice) {
-            registerForPushNotificationsAsync().then(
-                (token) => setExpoPushToken(token ?? null),
-                (error) => setError(error)
-            );
-        } else {
-            console.log("⚠️ Push notifications only work on physical devices.");
-        }
+        const initNotifications = async () => {
+            if (Device.isDevice) {
+                try {
+                    const token = await registerForPushNotificationsAsync();
+                    const finalToken = token ?? null;
+                    setExpoPushToken(finalToken);
+                    if (finalToken) {
+                        await AsyncStorage.setItem("sahrebugsStoken", finalToken);
+                        console.log("✅ Token AsyncStorage'a kaydedildi:", finalToken);
+                    }
+                } catch (err) {
+                    console.log("🚨 Token alma hatası:", err);
+                    setError(err as Error);
+                }
+            } else {
+                console.log("⚠️ Push notifications only work on physical devices.");
+            }
+        };
+
+        initNotifications();
 
         notificationListener.current = Notifications.addNotificationReceivedListener(
             (notification) => {
-                console.log("🔔 Notification received while app is running:", notification);
+                console.log("🔔 Bildirim geldi (ön planda):", notification);
                 setNotification(notification);
             }
         );
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(
             (response) => {
-                console.log("🔔 Notification response received:", JSON.stringify(response, null, 2));
+                console.log("📲 Bildirime tıklama:", JSON.stringify(response, null, 2));
             }
         );
 
@@ -72,6 +86,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
             responseListener.current?.remove();
         };
     }, []);
+
+    // 🛠 Token güncellemesi (backend'e gönder)
+    useEffect(() => {
+        const updateTokenOnBackend = async () => {
+            const expoPushToken = await AsyncStorage.getItem('sahrebugsStoken');
+            const userJson = await AsyncStorage.getItem('@user');
+
+            if (!expoPushToken || !userJson) return;
+
+            try {
+                const user = JSON.parse(userJson);
+                const userId = user._id;
+
+                await axios.patch(`${BASE_URL}/users/update-token/${userId}`, {
+                    pushNotificationToken: expoPushToken,
+                });
+
+                console.log("✅ Token backend’e güncellendi:", expoPushToken);
+            } catch (err) {
+                console.error("❌ Token güncelleme başarısız:", err);
+            }
+        };
+
+        updateTokenOnBackend();
+    }, [expoPushToken]);
 
     return (
         <NotificationContext.Provider value={{ expoPushToken, notification, error }}>

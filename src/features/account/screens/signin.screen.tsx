@@ -12,6 +12,7 @@ import { BottomContainer, ButtonText, CustomButton, InputsContainer } from '@src
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const signInSchema = z.object({
     email: z.string().email('Geçersiz e-posta'),
@@ -45,8 +46,10 @@ const SignInScreen = () => {
     });
 
     const onSubmit = async (data: SignInFormData) => {
+        const pushNotificationToken = await AsyncStorage.getItem("sahrebugsStoken");
         try {
-            await login(data.email, data.password);
+            await login(data.email, data.password, pushNotificationToken || '');
+
         } catch (err) {
             console.error('Giriş hatası:', err);
             Alert.alert('Hata', 'Giriş işlemi sırasında bir hata oluştu.');

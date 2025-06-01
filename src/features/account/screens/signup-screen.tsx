@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpFormData } from 'types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const signUpSchema = z.object({
@@ -43,18 +44,23 @@ const SignUpScreen = () => {
             positionTitle: "",
         },
     });
-
+    const pushNotificationToken = AsyncStorage.getItem("sahrebugsStoken");
     const { isLoading, error, setError, register } = useContext(AccountContext);
     const navigation = useNavigation<AuthScreenNavigationType<"SignUp">>();
 
     const handleRegister = async (formData: SignUpFormData) => {
-        // image alanı zorunlu değilse veya ileride dosya upload için ekleyeceksen ekle
+        const pushNotificationToken = await AsyncStorage.getItem("sahrebugsStoken");
+
         await register(
             formData.email,
             formData.password,
             formData.name,
-            null,
-            formData.positionTitle
+            null,                           // image
+            formData.positionTitle,
+            "0",                            // fixedBugsCount varsayılan
+            "Unknown",
+            "Unknown",
+            pushNotificationToken || ''
         );
     };
 
