@@ -48,4 +48,4 @@ with_node \
   --target "/Users/umutimamoglu/React-NativeApps/ShareBug/share-bugs/ios/Pods/Target Support Files/Pods-sharebugs/ExpoModulesProvider.swift" \
   --entitlement "/Users/umutimamoglu/React-NativeApps/ShareBug/share-bugs/ios/sharebugs/sharebugs.entitlements" \
   --platform "apple" \
-  --packages "expo" "expo-asset" "expo-constants" "expo-file-system" "expo-font" "expo-image-picker" "expo-keep-awake" "expo-secure-store"
+  --packages "expo" "expo-application" "expo-asset" "expo-constants" "expo-dev-launcher" "expo-dev-menu" "expo-device" "expo-eas-client" "expo-file-system" "expo-font" "expo-image-picker" "expo-keep-awake" "expo-notifications" "expo-secure-store" "expo-splash-screen" "expo-updates"

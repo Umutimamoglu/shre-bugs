@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37938822992",
+    "project_id": "sahre-bugs",
+    "storage_bucket": "sahre-bugs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37938822992:android:668fae491019c92059f655",
+        "android_client_info": {
+          "package_name": "com.umutimamoglu.sharebugs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG7CJ9mVOrKT4GkW5boNflTmUQcZZzd5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Pressable, TextInput, Alert, Keyboard, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthScreenNavigationType } from '@src/infrastracture/navigation/types';
@@ -21,9 +21,16 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 const SignInScreen = () => {
+    const inputRef = useRef<TextInput>(null);
+
     const [keyboardActive, setKeyboardActive] = useState(false);
     const navigation = useNavigation<AuthScreenNavigationType<'SignIn'>>();
     const { login } = useContext(AccountContext);
+
+
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
 
     const {
         control,
@@ -72,7 +79,7 @@ const SignInScreen = () => {
                             control={control}
                             name="email"
                             render={({ field: { onChange, value, onBlur } }) => (
-                                <TextInput
+                                <TextInput ref={inputRef}
                                     style={{
                                         width: 300,
                                         height: 44,

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, Touchable, TouchableOpacity } from "react-native";
+import { Pressable, ScrollView, Text, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { BASE_URL } from "@src/services/connections";
 import { CreateBugPayload, IColor } from "types";
-import { launchImageLibrary, ImageLibraryOptions } from "react-native-image-picker";
 import { getColors } from "src/heplers";
 import * as ImagePicker from "expo-image-picker";
 import { PROGRAMMING_LANGUAGES, BUG_TYPES } from "src/constants/data";
@@ -29,10 +27,13 @@ import {
 } from "../components/home.styled";
 import { theme } from "@src/theme";
 import { useBug } from "@src/services/bugs/bugs.context";
-import { ActionButton, BackButton, HeaderContainer, HeaderTitle } from "@src/features/allbugfeed/components/feed.Styled";
+import { BackButton, HeaderContainer, HeaderTitle } from "@src/features/allbugfeed/components/feed.Styled";
 
 import { useNavigation } from '@react-navigation/native';
 import { AllBugsNavigationType } from "@src/infrastracture/navigation/types";
+import { useNotification } from "@src/hooks/NotificationContext";
+
+
 
 const COLORS = getColors();
 
@@ -54,6 +55,7 @@ function HomeScreen() {
 
     const [selectedColor, setSelectedColor] = useState<IColor>(COLORS[0]);
     const [image, setImage] = useState<string>("");
+    const { expoPushToken, notification, error } = useNotification();
 
     const [newBug, setNewBug] = useState<CreateBugPayload>({
         name: "",
@@ -64,6 +66,8 @@ function HomeScreen() {
         type: "",
         howDidIFix: "",
     });
+
+
 
     const createNewBug = async () => {
         try {
@@ -226,6 +230,20 @@ function HomeScreen() {
                             </ButtonText>
                         </StyledPressableButton>
                     </CardContainer>
+                    {notification && (
+                        <CardContainer style={{ marginTop: 20, backgroundColor: "#fff3f0", padding: 16, borderRadius: 8 }}>
+                            <Text style={{ fontWeight: "bold", marginBottom: 8 }}>📬 Bildirim Alındı</Text>
+                            <Text style={{ marginBottom: 4 }}>🎯 Push Token:</Text>
+                            <Text selectable style={{ color: "gray" }}>{expoPushToken}</Text>
+
+                            <Text style={{ marginTop: 8 }}>📝 Başlık: {notification?.request.content.title}</Text>
+
+                            <Text style={{ marginTop: 8 }}>📦 Veri:</Text>
+                            <Text selectable style={{ fontSize: 12, color: "gray" }}>
+                                {JSON.stringify(notification?.request.content.data, null, 2)}
+                            </Text>
+                        </CardContainer>
+                    )}
                 </HomeMainContainer>
             </ScrollView>
         </SafeArea>
