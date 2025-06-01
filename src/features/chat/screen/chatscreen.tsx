@@ -5,8 +5,8 @@ import {
     TouchableOpacity,
     View,
     Text,
-    StyleSheet,
     Image,
+    StyleSheet
 } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { AllBugsNavigationType, AllBugsStackParamList } from "@src/infrastracture/navigation/types";
@@ -18,72 +18,67 @@ import { BASE_URL } from "@src/services/connections";
 import MessageItem from "../components/messageItem";
 import axios from "axios";
 import { BackButton } from "@src/features/allbugfeed/components/feed.Styled";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { faLeftRight } from "@fortawesome/free-solid-svg-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 type ChatScreenRouteProp = RouteProp<AllBugsStackParamList, "ChatScreen">;
 
 const fallbackImage = require("../../../../assets/userUnknown.png");
 
 const ChatScreen = () => {
     const route = useRoute<ChatScreenRouteProp>();
-    const { bug } = route.params;
-    const { user, updateProfile } = useContext(AccountContext);
     const navigation = useNavigation<AllBugsNavigationType>();
-
+    const { user, updateProfile } = useContext(AccountContext);
     const { chatId, messages, isLoading, findOrCreateChat, fetchMessages, sendMessage } = useChat();
-    const [newMessage, setNewMessage] = useState<string>("");
+
+    const [newMessage, setNewMessage] = useState("");
     const [bugUser, setBugUser] = useState<any>(null);
     const [forceFallback, setForceFallback] = useState(false);
 
+    const { bug, senderUserId } = route.params ?? {};
 
     const profileImageSource = useMemo(() => {
         if (forceFallback || !bugUser?.image || bugUser.image.trim() === "") {
             return fallbackImage;
         }
-
-        // Eğer image zaten https:// ile başlıyorsa olduğu gibi kullan
         if (bugUser.image.startsWith("http")) {
             return { uri: bugUser.image };
         }
-
-        // Aksi halde BASE_URL ile birleştir
         return { uri: `${BASE_URL}/${bugUser.image}` };
     }, [bugUser?.image, forceFallback]);
 
     useEffect(() => {
         if (!user || !bug) return;
-
         const initChat = async () => {
             try {
-                const chatId = await findOrCreateChat(user, bug);
-                if (chatId) {
-                    await fetchMessages(chatId);
+                const id = await findOrCreateChat(user, bug);
+                if (id) {
+                    await fetchMessages(id);
                 }
             } catch (error) {
                 console.error("Chat oluşturulurken hata oluştu:", error);
             }
         };
-
         initChat();
     }, [user, bug]);
 
-    const fetchUserDetails = async () => {
-        if (!bug?.user?._id) return;
-
-        try {
-            const response = await axios.get(`${BASE_URL}/users/getUser/${bug.user._id}`);
-            if (response.status === 200) {
-                setBugUser(response.data);
-                console.log("✅ Kullanıcı bilgileri başarıyla alındı:", response.data);
-            }
-        } catch (error) {
-            console.error("❌ Kullanıcı bilgisi alınırken hata oluştu:", error);
-        }
-    };
-
     useEffect(() => {
-        fetchUserDetails();
-    }, [bug]);
+        const fetchBugUser = async () => {
+            const userId = senderUserId || bug?.user?._id;
+            if (!userId) return;
+
+            try {
+                const response = await axios.get(`${BASE_URL}/users/getUser/${userId}`);
+                if (response.status === 200) {
+                    setBugUser(response.data);
+                    console.log("📥 Kullanıcı bilgisi alındı:", response.data);
+                }
+            } catch (error) {
+                console.error("❌ Kullanıcı bilgisi alınamadı:", error);
+            }
+        };
+
+        fetchBugUser();
+    }, [senderUserId, bug]);
 
     const handleSendMessage = async () => {
         if (newMessage.trim() && user && chatId) {
@@ -97,27 +92,21 @@ const ChatScreen = () => {
 
         try {
             const updatedCount = parseInt(bugUser.fixedBugsCount, 10) + 1;
-
-            // Eğer image file:// ile başlıyorsa, backend'e göndermemek için null yap
-            const safeImage = bugUser.image?.startsWith("file://")
-                ? null
-                : bugUser.image;
+            const safeImage = bugUser.image?.startsWith("file://") ? null : bugUser.image;
 
             const updatedUser = {
                 ...bugUser,
                 fixedBugsCount: updatedCount.toString(),
-                image: safeImage, // 🔐 image güvenli hale getirildi
+                image: safeImage,
             };
 
             await updateProfile(updatedUser);
-
             setBugUser(updatedUser);
             console.log("✔️ fixedBugsCount güncellendi:", updatedCount);
         } catch (error) {
             console.error("fixedBugsCount güncellenirken hata:", error);
         }
     };
-
 
     return (
         <SafeArea edges={["top"]} color={theme.colors.ui.tertiary2}>
@@ -126,27 +115,20 @@ const ChatScreen = () => {
                     <MaterialCommunityIcons name="arrow-left" size={36} color="black" />
                 </BackButton>
 
-                {/* Kullanıcı Resmi */}
                 <Image
                     source={profileImageSource}
                     style={styles.profileImage}
                     onError={() => setForceFallback(true)}
                 />
 
-                {/* Kullanıcı Adı */}
                 <Text style={styles.headerTitle}>
                     {(bugUser?.name?.length ?? 0) > 18
                         ? bugUser.name.slice(0, 18) + '...'
                         : bugUser?.name || 'Unknown User'}
                 </Text>
 
-
-                {/* Sağ üstteki ikonlar */}
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10, paddingRight: 12 }}>
-                    <TouchableOpacity
-                        style={styles.checkButton}
-                        onPress={handleIncrementFixedCount}
-                    >
+                    <TouchableOpacity style={styles.checkButton} onPress={handleIncrementFixedCount}>
                         <Text style={styles.checkIcon}>✔️</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate("UserDetailScreen")}>
@@ -163,6 +145,17 @@ const ChatScreen = () => {
                 renderItem={({ item }) => (
                     <MessageItem item={item} isMyMessage={item.sender === user?._id} />
                 )}
+                contentContainerStyle={{ flexGrow: 1, paddingBottom: 12 }}
+                ListEmptyComponent={
+                    !isLoading
+                        ? (
+                            <Text style={{ textAlign: 'center', marginTop: 20 }}>
+                                Henüz mesaj yok.
+                            </Text>
+                        )
+                        : null
+                }
+
             />
 
             <View style={styles.inputContainer}>
@@ -179,6 +172,7 @@ const ChatScreen = () => {
         </SafeArea>
     );
 };
+
 
 export default ChatScreen;
 

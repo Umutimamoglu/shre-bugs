@@ -11,7 +11,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import { AccountProvider } from "./src/services/account/account.context";
 import { NotificationProvider } from "./src/hooks/NotificationContext";
-
+import { useStartupNavigation } from "./src/hooks/startUpNavigation"
 // Font tanımı
 const customFonts = {
   PP_Regular: Poppins_400Regular,
@@ -29,9 +29,10 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [fontsLoaded] = useFonts(customFonts);
+  useStartupNavigation(); // 💡 Her zaman çağrılır, ama içinde kendi kontrolünü yapar
 
   if (!fontsLoaded) {
-    return null; // Fontlar yüklenmeden uygulama render edilmesin
+    return null;
   }
 
   return (

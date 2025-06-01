@@ -41,7 +41,10 @@ export type BugsStackParamList = {
 export type AllBugsStackParamList = {
     AllBugs: undefined;
     AllBugDetail: { bug: IAllBugs };
-    ChatScreen: { bug: IAllBugs };
+    ChatScreen: {
+        bug?: IAllBugs; // opsiyonel yap, çünkü push notification'dan gelirken olmayabilir
+        senderUserId?: string;
+    };
     FavoriBugs: undefined;
     UserDetailScreen: undefined;
 

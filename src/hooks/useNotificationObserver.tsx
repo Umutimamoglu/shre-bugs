@@ -20,6 +20,7 @@ export const useNotificationObserver = () => {
               screen: "ChatScreen",
               params,
             });
+            console.log("paramss LOGUUUUUU   : :  : :  : ", params)
           } else {
             navigate(screen, params); // Diğer ekranlar için
           }
