@@ -30,7 +30,7 @@ export const deleteToken = async (key: string) => {
 };
 
 // Register User// ✅ GÜNCELLENMİŞ HALİ
-export const registerUser = async ({ email, name, password, image, positionTitle, fixedBugsCount, experience, country }: RegisterUserTypes) => {
+export const registerUser = async ({ email, name, password, image, positionTitle, fixedBugsCount, experience, country, otp }: RegisterUserTypes) => {
     console.log("Registering user:", { email, name, password, image });
 
     try {
@@ -42,7 +42,8 @@ export const registerUser = async ({ email, name, password, image, positionTitle
             positionTitle,
             fixedBugsCount,
             experience,
-            country
+            country,
+            otp
         });
 
         console.log("User registration successful:", response.data.user);
@@ -90,6 +91,11 @@ export const loginUser = async ({ email, password }: LoginUserTypes) => {
         throw new Error("Login failed.");
     }
 };
+export const sendOtpService = async ({ email }: { email: string }) => {
+    const response = await axiosInstance.post("/users/send-otp", { email });
+    return response.data;
+};
+
 
 
 export const updateProfileService = async (profileData: IAuthenticatedUser): Promise<IAuthenticatedUser> => {

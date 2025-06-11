@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IAuthenticatedUser } from "types";
-import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService, saveToken } from "./account.service";
+import { IAuthenticatedUser, OtpTypes } from "types";
+import { registerUser, loginUser, deleteToken, axiosInstance, updateProfileService, saveToken, sendOtpService } from "./account.service";
 import { BASE_URL } from "../connections";
 interface AccountContextType {
     isLoading: boolean;
@@ -19,9 +19,11 @@ interface AccountContextType {
         fixedBugsCount: string,
         experience: string,
         country: string,
-        pushNotificationToken: string | null
+        pushNotificationToken: string | null,
+        otp: string
     ) => Promise<void>;
     login: (email: string, password: string, token: string) => Promise<void>;
+    sendOtp: (email: string) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (profileData: IAuthenticatedUser) => Promise<void>;
 }
@@ -64,7 +66,9 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         positionTitle: string,
         fixedBugsCount: string,
         experience: string,
-        country: string
+        country: string,
+        pushNotificationToken: string | null,
+        otp: string
     ) => {
         setIsLoading(true);
         setError(null);
@@ -78,7 +82,9 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 positionTitle,
                 fixedBugsCount,
                 experience,
-                country
+                country,
+                otp,
+                pushNotificationToken
             });
 
             const authenticatedUser: IAuthenticatedUser = {
@@ -101,6 +107,29 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
 
         } catch (err) {
             if (err instanceof Error) {
+                setError(err.message);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+
+    const sendOtp = async (email: string) => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            await sendOtpService({ email });
+
+            // E-maili geçici olarak kaydet (register ekranında tekrar kullanılabilir)
+            await AsyncStorage.setItem("@pending_email", email);
+
+            console.log("📧 OTP başarıyla gönderildi:", email);
+        } catch (err) {
+            if (err instanceof Error) {
+                console.error("❌ OTP gönderme hatası:", err.message);
                 setError(err.message);
             }
         } finally {
@@ -139,6 +168,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(false);
         }
     };
+
     const logout = async () => {
         setIsLoading(true);
         setError(null);
@@ -217,6 +247,7 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
                 error,
                 user,
                 isLoggedIn,
+                sendOtp,
 
                 setError,
                 setUser,

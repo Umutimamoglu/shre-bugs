@@ -13,7 +13,7 @@ import { AuthScreenNavigationType } from '@src/infrastracture/navigation/types';
 const WelcomeScreen = () => {
     const navigation = useNavigation<AuthScreenNavigationType<"Welcome">>();
     const navigateToSignUpScreen = () => {
-        navigation.navigate("SignUp");
+        navigation.navigate("SignIn");
     };
 
     return (

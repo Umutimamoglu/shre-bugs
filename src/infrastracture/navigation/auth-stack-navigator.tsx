@@ -5,6 +5,8 @@ import { AuthStackParamList } from "./types"
 import SignInScreen from "@src/features/account/screens/signin.screen"
 import WelcomeScreen from "@src/features/account/screens/welcome.screen"
 import SingUpScreen from "@src/features/account/screens/signup-screen"
+import EmailVerificationScreen from "@src/features/account/screens/emailVerificationScreen"
+
 
 
 
@@ -26,6 +28,13 @@ const AuthStackNavigator = () => {
                     headerShown: false
                 }}
                 component={SignInScreen}
+            />
+            <Stack.Screen
+                name="EmailVerificationScreen"
+                options={{
+                    headerShown: false
+                }}
+                component={EmailVerificationScreen}
             />
             <Stack.Screen
                 name="SignUp"

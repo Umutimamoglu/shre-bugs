@@ -108,19 +108,26 @@ interface Message {
     message: string;
     createdAt: string;
 }
-export type RegisterUserTypes = {
+export interface RegisterUserTypes {
     email: string;
-    name: string;
     password: string;
-    image: string | null; // Null değerini de destekle
+    name: string;
+    image: string | null;
     positionTitle: string;
     fixedBugsCount: string;
     experience: string;
     country: string;
-};
+    otp: string;
+    pushNotificationToken: string | null;
+}
+
 type LoginUserTypes = {
     email: string;
     password: string;
+};
+type OtpTypes = {
+    email: string;
+
 };
 export interface SignUpFormData {
     name: string;

@@ -57,7 +57,7 @@ const SignInScreen = () => {
     };
 
     const navBack = () => {
-        navigation.goBack();
+        navigation.navigate('EmailVerificationScreen')
     };
 
     useEffect(() => {
