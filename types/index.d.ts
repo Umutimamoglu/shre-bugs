@@ -117,7 +117,6 @@ export interface RegisterUserTypes {
     fixedBugsCount: string;
     experience: string;
     country: string;
-    otp: string;
     pushNotificationToken: string | null;
 }
 
