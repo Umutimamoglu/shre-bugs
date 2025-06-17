@@ -8,6 +8,7 @@ interface IAuthenticatedUser {
     fixedBugsCount: string,
     experience: string,
     country: string,
+    otp: string,
     pushNotificationToken?: string | null;
 }
 
